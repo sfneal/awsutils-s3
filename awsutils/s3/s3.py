@@ -34,14 +34,14 @@ class S3(S3Helpers):
         assert transfer_mode in TRANSFER_MODES, "ERROR: Invalid 'transfer_mode' value."
         assert chunk_size > 4, "ERROR: Chunk size minimum is 5MB."
 
-        self._bucket_name = bucket_name
+        self.bucket_name = bucket_name
         S3Helpers.__init__(self, transfer_mode, chunk_size, multipart_threshold)
         self.cmd = S3Commands()
 
     @property
     def bucket_uri(self):
         """Retrieve a S3 bucket name in URI form."""
-        return bucket_uri(self._bucket_name)
+        return bucket_uri(self.bucket_name)
 
     @property
     def buckets(self):
@@ -113,7 +113,7 @@ class S3(S3Helpers):
         :param region: Bucket's hosting region
         """
         # Validate that the bucket does not already exist
-        assert self._bucket_name not in self.buckets, 'ERROR: Bucket `{0}` already exists.'.format(self._bucket_name)
+        assert self.bucket_name not in self.buckets, 'ERROR: Bucket `{0}` already exists.'.format(self.bucket_name)
         os.system(self.cmd.make_bucket(self.bucket_uri, region))
 
     def delete_bucket(self, force=False):
@@ -125,5 +125,5 @@ class S3(S3Helpers):
         :param force: Deletes all objects in the bucket including the bucket itself
         """
         # Validate that the bucket does exist
-        assert self._bucket_name in self.buckets, 'ERROR: Bucket `{0}` does not exists.'.format(self._bucket_name)
+        assert self.bucket_name in self.buckets, 'ERROR: Bucket `{0}` does not exists.'.format(self.bucket_name)
         os.system(self.cmd.remove_bucket(self.bucket_uri, force))
