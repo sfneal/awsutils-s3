@@ -7,7 +7,7 @@ def mb_to_bytes(mb):
     return mb * 1024 * 1024
 
 
-class S3Upload:
+class S3Helpers:
     def __init__(self, transfer_mode, chunk_size, multipart_threshold):
         """
         AWS CLI S3 uploader.
@@ -20,8 +20,51 @@ class S3Upload:
         self.chunk_size = mb_to_bytes(chunk_size)
         self.multipart_threshold = mb_to_bytes(multipart_threshold)
 
+    def _upload_single_part(self, local_path, remote_path):
+        """
+        Upload a file or folder to an S3 bucket in a single part.
 
-class S3(S3Upload):
+        :param local_path: Path to file on local disk
+        :param remote_path: S3 key, aka remote path relative to S3 bucket's root
+        """
+        pass
+
+    def _upload_multi_part(self, local_path, remote_path):
+        """
+        Upload a file or folder to an S3 bucket in multiple parts.
+
+        :param local_path: Path to file on local disk
+        :param remote_path: S3 key, aka remote path relative to S3 bucket's root
+        """
+        pass
+
+    def _upload_needed(self, local_path, remote_path):
+        """
+        Determine weather a file needs to be uploaded to S3.
+
+        :param local_path: Path to file on local disk
+        :param remote_path: S3 key, aka remote path relative to S3 bucket's root
+        """
+        pass
+
+    def _download_needed(self, local_path, remote_path):
+        """
+        Determine weather a file needs to be download from S3.
+
+        :param local_path: Path to file on local disk
+        :param remote_path: S3 key, aka remote path relative to S3 bucket's root
+        """
+        pass
+
+    def _multi_part_needed(self, local_path):
+        """
+        Determine weather a multi-part file upload is needed
+
+        :param local_path: Path to file on local disk
+        """
+
+
+class S3(S3Helpers):
     def __init__(self, bucket, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
         """
         AWS CLI S3 wrapper.
@@ -35,7 +78,7 @@ class S3(S3Upload):
         assert chunk_size > 4, "ERROR: Chunk size minimum is 5MB."
 
         self.bucket = bucket
-        S3Upload.__init__(self, transfer_mode, chunk_size, multipart_threshold)
+        S3Helpers.__init__(self, transfer_mode, chunk_size, multipart_threshold)
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private'):
         """
