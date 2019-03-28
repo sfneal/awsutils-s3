@@ -36,7 +36,7 @@ class S3Commands:
         return cmd.format(source_path=source_path, destination_uri=destination_uri, acl=acl)
 
     @staticmethod
-    def list(uri='', recursive=None, human_readable=None, summarize=False):
+    def list(uri='', recursive=False, human_readable=False, summarize=False):
         """
         List files/folders in a bucket if a URI is specified or list available buckets.
 

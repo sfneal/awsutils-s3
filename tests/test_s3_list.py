@@ -19,8 +19,8 @@ class TestManipulateInsert(unittest.TestCase):
     @Timer.decorator
     def test_s3_list_buckets(self):
         buckets = self.s3.buckets
-        self.assertIsInstance(buckets, list)
         printer('Available S3 Buckets', buckets)
+        self.assertIsInstance(buckets, list)
 
 
 if __name__ == '__main__':
