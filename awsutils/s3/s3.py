@@ -31,6 +31,11 @@ class S3(S3Helpers):
         """Retrieve a S3 bucket name in URI form."""
         return bucket_uri(self._bucket_name)
 
+    @property
+    def buckets(self):
+        """List all available S3 buckets."""
+        return os.system(self.cmd.list())
+
     def sync(self, local_path, remote_path=None, delete=False, acl='private'):
         """
         Synchronize local files with an S3 bucket.

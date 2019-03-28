@@ -21,7 +21,7 @@ class S3Commands:
         return cmd
 
     @staticmethod
-    def sync(source_path, destination_uri, delete, acl):
+    def sync(source_path, destination_uri, delete=False, acl='private'):
         """
         Synchronize local files with an S3 bucket.
 
@@ -34,3 +34,20 @@ class S3Commands:
         cmd = 'aws s3 sync "{source_path}" {destination_uri} --acl {acl}'
         cmd += ' --delete' if delete else ''
         return cmd.format(source_path=source_path, destination_uri=destination_uri, acl=acl)
+
+    @staticmethod
+    def list(uri='', recursive=None, human_readable=None, summarize=False):
+        """
+        List files/folders in a bucket if a URI is specified or list available buckets.
+
+        :param uri: S3 bucket URI
+        :param recursive: Recursively list files/folders
+        :param human_readable: Displays file sizes in human readable format
+        :param summarize: Displays summary information (number of objects, total size)
+        :return: Command string
+        """
+        cmd = 'aws s3 ls {url}'
+        cmd += ' --recursive' if recursive else ''
+        cmd += ' --human-readable' if human_readable else ''
+        cmd += ' --summarize' if summarize else ''
+        return cmd.format(uri)
