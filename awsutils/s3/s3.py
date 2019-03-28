@@ -105,3 +105,13 @@ class S3(S3Helpers):
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
         os.system(self.cmd.copy(uri1, uri2, recursive, include, exclude))
+
+    def create_bucket(self, region=None):
+        """
+        Create a new S3 bucket.
+
+        :param region: Bucket's hosting region
+        """
+        # Validate that the bucket does not already exist
+        assert self._bucket_name not in self.buckets, 'ERROR: Bucket `{0}` already exists.'.format(self._bucket_name)
+        os.system(self.cmd.make_bucket(self.bucket_uri, region))

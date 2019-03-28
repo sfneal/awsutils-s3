@@ -51,3 +51,16 @@ class S3Commands:
         cmd += ' --human-readable' if human_readable else ''
         cmd += ' --summarize' if summarize else ''
         return cmd.format(uri=uri)
+
+    @staticmethod
+    def make_bucket(uri, region=None):
+        """
+        Creates an S3 bucket.
+
+        :param uri: S3 bucket uri
+        :param region: AWS region
+        :return: Command string
+        """
+        cmd = 'aws s3 mb {uri}'
+        cmd += ' --region {region}'.format(region=region) if region else ''
+        return cmd.format(uri=uri)
