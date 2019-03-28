@@ -13,7 +13,8 @@ class TestManipulateInsert(unittest.TestCase):
 
     @Timer.decorator
     def test_s3_list_buckets(self):
-        print(self.s3.buckets)
+        buckets = self.s3.buckets
+        self.assertIsInstance(buckets, list)
 
 
 if __name__ == '__main__':
