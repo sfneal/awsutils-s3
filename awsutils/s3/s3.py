@@ -7,7 +7,21 @@ def mb_to_bytes(mb):
     return mb * 1024 * 1024
 
 
-class S3:
+class S3Upload:
+    def __init__(self, transfer_mode, chunk_size, multipart_threshold):
+        """
+        AWS CLI S3 uploader.
+
+        :param transfer_mode: Upload/download mode
+        :param chunk_size: Size of chunk in multipart upload in MB
+        :param multipart_threshold: Minimum size in MB to upload using multipart.
+        """
+        self.transfer_mode = transfer_mode
+        self.chunk_size = mb_to_bytes(chunk_size)
+        self.multipart_threshold = mb_to_bytes(multipart_threshold)
+
+
+class S3(S3Upload):
     def __init__(self, bucket, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
         """
         AWS CLI S3 wrapper.
@@ -21,9 +35,7 @@ class S3:
         assert chunk_size > 4, "ERROR: Chunk size minimum is 5MB."
 
         self.bucket = bucket
-        self.transfer_mode = transfer_mode
-        self.chunk_size = mb_to_bytes(chunk_size)
-        self.multipart_threshold = mb_to_bytes(multipart_threshold)
+        S3Upload.__init__(self, transfer_mode, chunk_size, multipart_threshold)
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private'):
         """
@@ -47,19 +59,13 @@ class S3:
             cmd += ' --delete'
         os.system(cmd)
 
-    def upload(self, local_path, remote_path, mode=None, chunk_size=None, multipart_threshold=None):
+    def upload(self, local_path, remote_path):
         """
         Upload a local file to an S3 bucket.
 
         :param local_path: Path to file on local disk
         :param remote_path: S3 key, aka remote path relative to S3 bucket's root
-        :param mode: Upload mode
-        :param chunk_size: Size of chunks in multipart upload in MB
-        :param multipart_threshold: Minimum size in MB to upload using multipart
         """
-        mode = mode if mode else self.transfer_mode
-        chunk_size = chunk_size if mode else self.chunk_size
-        multipart_threshold = multipart_threshold if multipart_threshold else self.multipart_threshold
         pass
 
     def download(self, local_path, remote_path):
