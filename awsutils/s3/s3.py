@@ -45,7 +45,11 @@ class S3(S3Helpers):
 
     @property
     def buckets(self):
-        """List all available S3 buckets."""
+        """
+        List all available S3 buckets.
+
+        Execute the `aws s3 ls` command and decode the output
+        """
         return [out.rsplit(' ', 1)[-1] for out in decode_stdout(self.cmd.list())]
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private'):
@@ -98,4 +102,6 @@ class S3(S3Helpers):
         More on inclusion and exclusion parameters...
         http://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters
         """
-        pass
+        uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
+        uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
+        os.system(self.cmd.copy(uri1, uri2, recursive, include, exclude))
