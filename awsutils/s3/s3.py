@@ -22,14 +22,14 @@ class S3(S3Helpers):
         assert transfer_mode in TRANSFER_MODES, "ERROR: Invalid 'transfer_mode' value."
         assert chunk_size > 4, "ERROR: Chunk size minimum is 5MB."
 
-        self.bucket_name = bucket_name
+        self._bucket_name = bucket_name
         S3Helpers.__init__(self, transfer_mode, chunk_size, multipart_threshold)
         self.cmd = S3Commands()
 
     @property
     def bucket_uri(self):
         """Retrieve a S3 bucket name in URI form."""
-        return bucket_uri(self.bucket_name)
+        return bucket_uri(self._bucket_name)
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private'):
         """
