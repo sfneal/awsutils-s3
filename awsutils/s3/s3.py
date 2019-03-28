@@ -24,7 +24,7 @@ class S3(S3Helpers):
 
         self.bucket_name = bucket_name
         S3Helpers.__init__(self, transfer_mode, chunk_size, multipart_threshold)
-        self.commands = S3Commands()
+        self.cmd = S3Commands()
 
     @property
     def bucket_uri(self):
@@ -46,12 +46,8 @@ class S3(S3Helpers):
         :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
         """
         assert acl in ACL, "ACL parameter must be one of the following: {0}".format(', '.join("'{0}'".format(i)
-                                                                                                 for i in ACL))
-        cmd = 'aws s3 sync "{src}" {bucket}/{dst} --acl {acl}'.format(src=local_path, dst=remote_path,
-                                                                      bucket=self.bucket_uri, acl=acl)
-        if delete:
-            cmd += ' --delete'
-        os.system(cmd)
+                                                                                              for i in ACL))
+        os.system(self.cmd.sync(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), delete, acl))
 
     def upload(self, local_path, remote_path):
         """
