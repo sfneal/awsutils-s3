@@ -106,7 +106,7 @@ class S3(S3Helpers):
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
         os.system(self.cmd.copy(uri1, uri2, recursive, include, exclude))
 
-    def create_bucket(self, region=None):
+    def create_bucket(self, region='us-east-1'):
         """
         Create a new S3 bucket.
 
