@@ -115,3 +115,15 @@ class S3(S3Helpers):
         # Validate that the bucket does not already exist
         assert self._bucket_name not in self.buckets, 'ERROR: Bucket `{0}` already exists.'.format(self._bucket_name)
         os.system(self.cmd.make_bucket(self.bucket_uri, region))
+
+    def delete_bucket(self, force=False):
+        """
+        Deletes an empty S3 bucket. A bucket must be completely empty of objects and versioned
+        objects before it can be deleted. However, the force parameter can be used to delete
+        the non-versioned objects in the bucket before the bucket is deleted.
+
+        :param force: Deletes all objects in the bucket including the bucket itself
+        """
+        # Validate that the bucket does exist
+        assert self._bucket_name in self.buckets, 'ERROR: Bucket `{0}` does not exists.'.format(self._bucket_name)
+        os.system(self.cmd.remove_bucket(self.bucket_uri, force))

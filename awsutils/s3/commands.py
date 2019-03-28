@@ -64,3 +64,16 @@ class S3Commands:
         cmd = 'aws s3 mb {uri}'
         cmd += ' --region {region}'.format(region=region) if region else ''
         return cmd.format(uri=uri)
+
+    @staticmethod
+    def remove_bucket(uri, force=False):
+        """
+        Delete an S3 bucket if it is empty.
+
+        :param uri: S3 bucket uri
+        :param force: Deletes all objects in the bucket including the bucket itself
+        :return: Command string
+        """
+        cmd = 'aws rb {uri}'
+        cmd += ' --force' if force else ''
+        return cmd.format(uri=uri)
