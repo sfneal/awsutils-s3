@@ -46,8 +46,8 @@ class S3Commands:
         :param summarize: Displays summary information (number of objects, total size)
         :return: Command string
         """
-        cmd = 'aws s3 ls {url}'
+        cmd = 'aws s3 ls {uri}'
         cmd += ' --recursive' if recursive else ''
         cmd += ' --human-readable' if human_readable else ''
         cmd += ' --summarize' if summarize else ''
-        return cmd.format(uri)
+        return cmd.format(uri=uri)
