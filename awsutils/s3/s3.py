@@ -2,6 +2,11 @@ import os
 from awsutils.s3._constants import ACL, TRANSFER_MODES
 
 
+def mb_to_bytes(mb):
+    """Convert Megabytes value to bytes."""
+    return mb * 1024 * 1024
+
+
 class S3:
     def __init__(self, bucket, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
         """
@@ -17,8 +22,8 @@ class S3:
 
         self.bucket = bucket
         self.transfer_mode = transfer_mode
-        self.chunk_size = chunk_size
-        self.multipart_threshold = multipart_threshold
+        self.chunk_size = mb_to_bytes(chunk_size)
+        self.multipart_threshold = mb_to_bytes(multipart_threshold)
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private'):
         """
