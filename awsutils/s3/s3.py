@@ -1,10 +1,24 @@
 import os
-from awsutils.s3._constants import S3_ACL
+from awsutils.s3._constants import ACL, TRANSFER_MODES
 
 
 class S3:
-    def __init__(self, bucket):
+    def __init__(self, bucket, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
+        """
+        AWS CLI S3 wrapper.
+
+        :param bucket: S3 bucket name
+        :param transfer_mode: Upload/download mode
+        :param chunk_size: Size of chunk in multipart upload in MB
+        :param multipart_threshold: Minimum size in MB to upload using multipart.
+        """
+        assert transfer_mode in TRANSFER_MODES, "ERROR: Invalid 'transfer_mode' value."
+        assert chunk_size > 4, "ERROR: Chunk size minimum is 5MB."
+
         self.bucket = bucket
+        self.transfer_mode = transfer_mode
+        self.chunk_size = chunk_size
+        self.multipart_threshold = multipart_threshold
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private'):
         """
@@ -19,12 +33,23 @@ class S3:
         :param remote_path: Destination directory (relative to bucket root)
         :param delete: Sync with deletion, disabled by default
         :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
-        :return:
         """
-        assert acl in S3_ACL, "ACL parameter must be one of the following: {0}".format(', '.join("'{0}'".format(i)
-                                                                                                 for i in S3_ACL))
+        assert acl in ACL, "ACL parameter must be one of the following: {0}".format(', '.join("'{0}'".format(i)
+                                                                                                 for i in ACL))
         cmd = 'aws s3 sync "{src}" s3://{bucket}/{dst} --acl {acl}'.format(src=local_path, dst=remote_path,
                                                                            bucket=self.bucket, acl=acl)
         if delete:
             cmd += ' --delete'
         os.system(cmd)
+
+    def upload(self, local_path, remote_path, mode=None, chuck_size=None, multipart_threshold=None):
+        """
+        Upload a local file to an S3 bucket.
+
+        :param local_path: Path to file on local disk
+        :param remote_path: S3 key, aka remote path relative to S3 bucket's root
+        :param mode: Upload mode
+        :param chuck_size: Size of chunks in multipart upload in MB
+        :param multipart_threshold: Minimum size in MB to upload using multipart
+        """
+        pass
