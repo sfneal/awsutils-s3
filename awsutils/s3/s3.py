@@ -1,4 +1,5 @@
 import os
+from subprocess import Popen, PIPE
 from awsutils.s3._constants import ACL, TRANSFER_MODES
 from awsutils.s3.helpers import S3Helpers
 from awsutils.s3.commands import S3Commands
@@ -7,6 +8,17 @@ from awsutils.s3.commands import S3Commands
 def bucket_uri(bucket):
     """Convert a S3 bucket name string in to a S3 bucket uri."""
     return 's3://{bucket}'.format(bucket=bucket)
+
+
+def decode_stdout(cmd):
+    """
+    Decode console output and retrieve decoded strings in list form.
+
+    :param cmd: Command to execute
+    :return: List of output strings
+    """
+    with Popen(cmd, shell=True, stdout=PIPE) as process:
+        return [i.decode("utf-8").strip() for i in process.stdout]
 
 
 class S3(S3Helpers):
@@ -34,7 +46,7 @@ class S3(S3Helpers):
     @property
     def buckets(self):
         """List all available S3 buckets."""
-        return os.system(self.cmd.list())
+        return [out.rsplit(' ', 1)[-1] for out in decode_stdout(self.cmd.list())]
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private'):
         """
