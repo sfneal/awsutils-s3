@@ -74,6 +74,6 @@ class S3Commands:
         :param force: Deletes all objects in the bucket including the bucket itself
         :return: Command string
         """
-        cmd = 'aws rb {uri}'
+        cmd = 'aws s3 rb {uri}'
         cmd += ' --force' if force else ''
         return cmd.format(uri=uri)
