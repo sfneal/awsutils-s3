@@ -42,14 +42,26 @@ class S3:
             cmd += ' --delete'
         os.system(cmd)
 
-    def upload(self, local_path, remote_path, mode=None, chuck_size=None, multipart_threshold=None):
+    def upload(self, local_path, remote_path, mode=None, chunk_size=None, multipart_threshold=None):
         """
         Upload a local file to an S3 bucket.
 
         :param local_path: Path to file on local disk
         :param remote_path: S3 key, aka remote path relative to S3 bucket's root
         :param mode: Upload mode
-        :param chuck_size: Size of chunks in multipart upload in MB
+        :param chunk_size: Size of chunks in multipart upload in MB
         :param multipart_threshold: Minimum size in MB to upload using multipart
+        """
+        mode = mode if mode else self.transfer_mode
+        chunk_size = chunk_size if mode else self.chunk_size
+        multipart_threshold = multipart_threshold if multipart_threshold else self.multipart_threshold
+        pass
+
+    def download(self, local_path, remote_path):
+        """
+        Download a file or folder from an S3 bucket.
+
+        :param local_path: Path to file on local disk
+        :param remote_path: S3 key, aka remote path relative to S3 bucket's root
         """
         pass
