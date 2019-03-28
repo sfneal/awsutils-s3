@@ -7,6 +7,11 @@ def mb_to_bytes(mb):
     return mb * 1024 * 1024
 
 
+def bucket_uri(bucket):
+    """Convert a S3 bucket name string in to a S3 bucket uri."""
+    return 's3://{bucket}'.format(bucket=bucket)
+
+
 class S3Commands:
     @staticmethod
     def copy(uri1, uri2, recursive=None, include=None, exclude=None):
@@ -87,11 +92,11 @@ class S3Helpers:
 
 
 class S3(S3Helpers):
-    def __init__(self, bucket, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
+    def __init__(self, bucket_name, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
         """
         AWS CLI S3 wrapper.
 
-        :param bucket: S3 bucket name
+        :param bucket_name: S3 bucket name
         :param transfer_mode: Upload/download mode
         :param chunk_size: Size of chunk in multipart upload in MB
         :param multipart_threshold: Minimum size in MB to upload using multipart.
@@ -99,8 +104,13 @@ class S3(S3Helpers):
         assert transfer_mode in TRANSFER_MODES, "ERROR: Invalid 'transfer_mode' value."
         assert chunk_size > 4, "ERROR: Chunk size minimum is 5MB."
 
-        self.bucket = bucket
+        self.bucket_name = bucket_name
         S3Helpers.__init__(self, transfer_mode, chunk_size, multipart_threshold)
+
+    @property
+    def bucket_uri(self):
+        """Retrieve a S3 bucket name in URI form."""
+        return bucket_uri(self.bucket_name)
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private'):
         """
@@ -118,8 +128,8 @@ class S3(S3Helpers):
         """
         assert acl in ACL, "ACL parameter must be one of the following: {0}".format(', '.join("'{0}'".format(i)
                                                                                                  for i in ACL))
-        cmd = 'aws s3 sync "{src}" s3://{bucket}/{dst} --acl {acl}'.format(src=local_path, dst=remote_path,
-                                                                           bucket=self.bucket, acl=acl)
+        cmd = 'aws s3 sync "{src}" {bucket}/{dst} --acl {acl}'.format(src=local_path, dst=remote_path,
+                                                                      bucket=self.bucket_uri, acl=acl)
         if delete:
             cmd += ' --delete'
         os.system(cmd)
