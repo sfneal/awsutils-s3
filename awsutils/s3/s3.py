@@ -157,7 +157,7 @@ class S3(S3Helpers):
         # Use local_path file/folder name as remote_path if none is specified
         remote_path = os.path.basename(local_path) if not remote_path else remote_path
         assert_acl(acl)
-        system_cmd(self.cmd.copy(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), recursive))
+        system_cmd(self.cmd.copy(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), recursive, acl=acl))
         return remote_path
 
     def download(self, remote_path, local_path=os.getcwd(), recursive=False):
