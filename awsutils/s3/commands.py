@@ -91,3 +91,17 @@ class S3Commands:
         cmd = 'aws s3 rb {uri}'
         cmd += ' --force' if force else ''
         return cmd.format(uri=uri)
+
+    @staticmethod
+    def pre_sign(uri, expiration=3600):
+        """
+        Generate a pre-signed URL for an Amazon S3 object.
+
+        This allows anyone who receives the pre-signed URL to retrieve the S3 object
+        with an HTTP GET request.
+
+        :param uri: S3 object URI
+        :param expiration: Number of seconds until the pre-signed URL expires
+        :return: Command string
+        """
+        return 'aws s3 presign {uri} --expires-in {expiration}'.format(uri=uri, expiration=expiration)

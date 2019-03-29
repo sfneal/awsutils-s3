@@ -168,3 +168,17 @@ class S3(S3Helpers):
         # Validate that the bucket does exist
         assert self.bucket_name in self.buckets, 'ERROR: Bucket `{0}` does not exists.'.format(self.bucket_name)
         system_cmd(self.cmd.remove_bucket(self.bucket_uri, force), False)
+
+    def pre_sign(self, remote_path, expiration=3600):
+        """
+        Generate a pre-signed URL for an Amazon S3 object.
+
+        This allows anyone who receives the pre-signed URL to retrieve the S3 object
+        with an HTTP GET request.
+
+        :param remote_path: Path to S3 object relative to bucket root
+        :param expiration: Number of seconds until the pre-signed URL expires
+        :return:
+        """
+        uri = '{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path)
+        return system_cmd(self.cmd.pre_sign(uri, expiration))
