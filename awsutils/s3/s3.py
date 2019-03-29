@@ -157,6 +157,24 @@ class S3(S3Helpers):
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
         system_cmd(self.cmd.copy(uri1, uri2, recursive, include, exclude), False)
 
+    def move(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None):
+        """
+        Move an S3 file or folder to another
+
+        :param src_path: Path to source file or folder in S3 bucket
+        :param dst_path: Path to destination file or folder
+        :param dst_bucket: Bucket to copy to, defaults to same bucket
+        :param recursive: Recursively copy all files within the directory
+        :param include: Don't exclude files or objects in the command that match the specified pattern
+        :param exclude: Exclude all files or objects from the command that matches the specified pattern
+
+        More on inclusion and exclusion parameters...
+        http://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters
+        """
+        uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
+        uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
+        system_cmd(self.cmd.move(uri1, uri2, recursive, include, exclude), False)
+
     def delete(self, remote_path, recursive=False, include=None, exclude=None):
         """
         Delete an S3 object from a bucket.
