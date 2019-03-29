@@ -25,8 +25,8 @@ class TestManipulateInsert(unittest.TestCase):
     def test_s3_copy(self):
         target = 'helpers.py'
         self.s3.copy('awsutils/s3/helpers.py', target)
-        files = self.s3.list()
-        self.assertTrue(target in files)
+        self.assertTrue(target in self.s3.list())
+        self.s3.delete(target)
 
 
 if __name__ == '__main__':

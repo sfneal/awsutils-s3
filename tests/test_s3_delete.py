@@ -25,7 +25,6 @@ class TestS3Delete(unittest.TestCase):
     def test_s3_delete(self):
         target = 'helpers.py'
         self.s3.copy('awsutils/s3/helpers.py', target)
-        self.assertTrue(target in self.s3.list())
 
         self.s3.delete(target)
         self.assertFalse(target in self.s3.list())
