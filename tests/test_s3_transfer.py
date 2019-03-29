@@ -16,7 +16,7 @@ def printer(header, body):
     print('\n{0}:\n'.format(header.upper()) + '\n'.join('\t{0}'.format(b) for b in body))
 
 
-class TestS3Upload(unittest.TestCase):
+class TestS3Transfer(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.s3 = S3(S3_BUCKET)
@@ -49,8 +49,6 @@ class TestS3Upload(unittest.TestCase):
         # printer('Remote S3 Files', s3_files)
         # printer('Local Files', local_files)
         self.assertEqual(set(s3_files), set(local_files))
-
-        self.s3.delete('awsutils', recursive=True)
 
 
 if __name__ == '__main__':
