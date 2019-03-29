@@ -3,7 +3,7 @@ import os
 from looptools import Timer
 from dirutility import DirPaths
 from awsutils.s3 import S3
-from . import S3_BUCKET, LOCAL_BASE, printer
+from tests import S3_BUCKET, LOCAL_BASE, printer
 
 
 class TestS3Transfer(unittest.TestCase):
