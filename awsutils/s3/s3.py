@@ -1,4 +1,3 @@
-# https://docs.aws.amazon.com/cli/latest/reference/s3/
 import os
 from subprocess import Popen, PIPE
 from awsutils.s3._constants import ACL, TRANSFER_MODES
@@ -49,6 +48,8 @@ class S3(S3Helpers):
     def __init__(self, bucket_name, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
         """
         AWS CLI S3 wrapper.
+
+        https://docs.aws.amazon.com/cli/latest/reference/s3/
 
         :param bucket_name: S3 bucket name
         :param transfer_mode: Upload/download mode
