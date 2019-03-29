@@ -37,6 +37,14 @@ def assert_acl(acl):
     return True
 
 
+def remote_path_root(remote_path):
+    """Return a remote_path referring to the S3 bucket's root if not specified."""
+    if len(remote_path) > 0 and '.' not in os.path.basename(remote_path) and not remote_path.endswith('/'):
+        return '{0}/'.format(remote_path)
+    else:
+        return remote_path
+
+
 class S3(S3Helpers):
     def __init__(self, bucket_name, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
         """
@@ -81,8 +89,7 @@ class S3(S3Helpers):
         :param summarize: Displays summary information (number of objects, total size)
         :return:
         """
-        if len(remote_path) > 0 and '.' not in os.path.basename(remote_path) and not remote_path.endswith('/'):
-            remote_path = '{0}/'.format(remote_path)
+        remote_path = remote_path_root(remote_path)
         cmd = self.cmd.list('{0}/{1}'.format(self.bucket_uri, remote_path), recursive, human_readable, summarize)
         return [out.rsplit(' ', 1)[-1] for out in system_cmd(cmd)]
 
