@@ -1,6 +1,6 @@
 class S3Commands:
     @staticmethod
-    def copy(object1, object2, recursive=False, include=None, exclude=None):
+    def copy(object1, object2, recursive=False, include=None, exclude=None, acl='private'):
         """
         Copy file(s)/folder(s) from one S3 bucket location to another
 
@@ -9,13 +9,14 @@ class S3Commands:
         :param recursive: Recursively copy all files within the directory
         :param include: Don't exclude files or objects in the command that match the specified pattern
         :param exclude: Exclude all files or objects from the command that matches the specified pattern
+        :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
         :return: Command string
         """
-        cmd = 'aws s3 cp {uri1} {uri2}'
+        cmd = 'aws s3 cp {uri1} {uri2} --acl {acl}'
         cmd += ' --recursive' if recursive else ''
         cmd += ' --include "{0}"'.format(include) if include else ''
         cmd += ' --exclude "{0}"'.format(exclude) if exclude else ''
-        return cmd.format(uri1=object1, uri2=object2)
+        return cmd.format(uri1=object1, uri2=object2, acl=acl)
 
     @staticmethod
     def remove(uri, recursive=False, include=None, exclude=None):
