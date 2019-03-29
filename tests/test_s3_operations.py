@@ -1,4 +1,5 @@
 import unittest
+import os
 from looptools import Timer
 from awsutils.s3 import S3
 from tests import S3_BUCKET, printer
@@ -8,6 +9,13 @@ class TestS3Operations(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.s3 = S3(S3_BUCKET)
+
+        cls.target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
+        cls.s3.sync(cls.target)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.s3.delete(cls.target)
 
     @Timer.decorator
     def test_s3_copy(self):
