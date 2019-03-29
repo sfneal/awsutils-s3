@@ -62,6 +62,24 @@ class S3(S3Helpers):
         """
         return [out.rsplit(' ', 1)[-1] for out in system_cmd(self.cmd.list())]
 
+    def list(self, remote_path='', recursive=False, human_readable=False, summarize=False):
+        """
+        List files/folders in a S3 bucket path.
+
+        Optionally, return information on file size on each objects as
+        well as summary info.
+
+        :param remote_path: Path to object root in S3 bucket
+        :param recursive: Recursively list files/folders
+        :param human_readable: Displays file sizes in human readable format
+        :param summarize: Displays summary information (number of objects, total size)
+        :return:
+        """
+        if '.' not in os.path.basename(remote_path) and not remote_path.endswith('/'):
+            remote_path = '{0}/'.format(remote_path)
+        cmd = self.cmd.list('{0}/{1}'.format(self.bucket_uri, remote_path), recursive, human_readable, summarize)
+        return [out.rsplit(' ', 1)[-1] for out in system_cmd(cmd)]
+
     def sync(self, local_path, remote_path=None, delete=False, acl='private'):
         """
         Synchronize local files with an S3 bucket.
