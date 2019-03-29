@@ -1,4 +1,5 @@
 import unittest
+import os
 from looptools import Timer
 from awsutils.s3 import S3
 
@@ -13,7 +14,8 @@ class TestManipulateInsert(unittest.TestCase):
 
     @Timer.decorator
     def test_s3_sync(self):
-        pass
+        target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
+        self.s3.sync(target)
 
 
 if __name__ == '__main__':
