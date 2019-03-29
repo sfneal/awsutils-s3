@@ -11,10 +11,33 @@ LOCAL_BASE = os.path.dirname(os.path.dirname(__file__))
 LOCAL_PATH = os.path.join(LOCAL_BASE, 'awsutils', 's3')
 
 
-class TestS3Sync(unittest.TestCase):
+def printer(header, body):
+    """Pretty print lists for visual check that correct output was returned."""
+    print('\n{0}:\n'.format(header.upper()) + '\n'.join('\t{0}'.format(b) for b in body))
+
+
+class TestS3Upload(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.s3 = S3(S3_BUCKET)
+
+    @Timer.decorator
+    def test_s3_upload(self):
+        target = 'test_s3_transfer.py'
+        self.s3.upload(os.path.join(LOCAL_BASE, 'tests', target))
+        self.assertTrue(target in self.s3.list())
+
+        self.s3.delete(target)
+        self.assertFalse(target in self.s3.list())
+
+    @Timer.decorator
+    def test_s3_download(self):
+        target = 'helpers.py'
+        self.s3.download('awsutils/s3/helpers.py')
+        self.assertTrue(os.path.isfile(target))
+
+        os.remove(target)
+        self.assertFalse(os.path.isfile(target))
 
     @Timer.decorator
     def test_s3_sync(self):
@@ -26,6 +49,8 @@ class TestS3Sync(unittest.TestCase):
         # printer('Remote S3 Files', s3_files)
         # printer('Local Files', local_files)
         self.assertEqual(set(s3_files), set(local_files))
+
+        self.s3.delete('awsutils', recursive=True)
 
 
 if __name__ == '__main__':
