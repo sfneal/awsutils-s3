@@ -22,12 +22,6 @@ class TestS3List(unittest.TestCase):
         cls.s3 = S3(S3_BUCKET)
 
     @Timer.decorator
-    def test_s3_list_buckets(self):
-        buckets = self.s3.buckets
-        # printer('Available S3 Buckets', buckets)
-        self.assertIsInstance(buckets, list)
-
-    @Timer.decorator
     def test_s3_list(self):
         s3_files = self.s3.list(TEST_PATH)
         local_files = os.listdir(LOCAL_PATH)

@@ -17,6 +17,12 @@ class TestS3Buckets(unittest.TestCase):
         cls.s3 = S3(S3_BUCKET)
 
     @Timer.decorator
+    def test_s3_list_buckets(self):
+        buckets = self.s3.buckets
+        # printer('Available S3 Buckets', buckets)
+        self.assertIsInstance(buckets, list)
+
+    @Timer.decorator
     def test_create_bucket(self):
         self.s3.bucket_name = self.s3.bucket_name + '2'
         self.s3.create_bucket()
