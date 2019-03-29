@@ -36,6 +36,7 @@ class TestS3Operations(unittest.TestCase):
 
         self.s3.move('awsutils/s3/helpers2.py', target)
         self.s3.delete(target)
+        self.assertFalse(target in self.s3.list())
 
     @Timer.decorator
     def test_s3_delete(self):
