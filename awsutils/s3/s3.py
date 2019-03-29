@@ -11,7 +11,7 @@ def bucket_uri(bucket):
     return 's3://{bucket}'.format(bucket=bucket)
 
 
-def system_cmd(cmd, decode_output=False):
+def system_cmd(cmd, decode_output=True):
     """
     Execute a system command.
 
