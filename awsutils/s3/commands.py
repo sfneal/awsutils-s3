@@ -1,3 +1,8 @@
+def clean_path(path):
+    """Return a path string with double quote wrappers if the path contains a space."""
+    return '"{0}"'.format(path) if ' ' in path else path
+
+
 def move_or_copy(command, object1, object2, recursive=False, include=None, exclude=None, acl='private'):
     """
     Copy file(s)/folder(s) from one S3 bucket location to another
@@ -19,12 +24,7 @@ def move_or_copy(command, object1, object2, recursive=False, include=None, exclu
     cmd += ' --recursive' if recursive else ''
     cmd += ' --include "{0}"'.format(include) if include else ''
     cmd += ' --exclude "{0}"'.format(exclude) if exclude else ''
-    return cmd.format(command=command, uri1=object1, uri2=object2, acl=acl)
-
-
-def clean_path(path):
-    """Return a path string with double quote wrappers if the path contains a space."""
-    return '"{0}"'.format(path) if ' ' in path else path
+    return cmd.format(command=command, uri1=clean_path(object1), uri2=clean_path(object2), acl=acl)
 
 
 class S3Commands:
