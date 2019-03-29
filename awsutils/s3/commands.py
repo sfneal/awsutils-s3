@@ -22,6 +22,11 @@ def move_or_copy(command, object1, object2, recursive=False, include=None, exclu
     return cmd.format(command=command, uri1=object1, uri2=object2, acl=acl)
 
 
+def clean_path(path):
+    """Return a path string with double quote wrappers if the path contains a space."""
+    return '"{0}"'.format(path) if ' ' in path else path
+
+
 class S3Commands:
     @staticmethod
     def list(uri='', recursive=False, human_readable=False, summarize=False):
@@ -65,7 +70,7 @@ class S3Commands:
         cmd += ' --recursive' if recursive else ''
         cmd += ' --include "{0}"'.format(include) if include else ''
         cmd += ' --exclude "{0}"'.format(exclude) if exclude else ''
-        return cmd.format(uri=uri)
+        return cmd.format(uri=clean_path(uri))
 
     @staticmethod
     def sync(source_path, destination_uri, delete=False, acl='private'):
@@ -80,7 +85,7 @@ class S3Commands:
         """
         cmd = 'aws s3 sync "{source_path}" {destination_uri} --acl {acl}'
         cmd += ' --delete' if delete else ''
-        return cmd.format(source_path=source_path, destination_uri=destination_uri, acl=acl)
+        return cmd.format(source_path=clean_path(source_path), destination_uri=clean_path(destination_uri), acl=acl)
 
     @staticmethod
     def make_bucket(uri, region=None):
@@ -93,7 +98,7 @@ class S3Commands:
         """
         cmd = 'aws s3 mb {uri}'
         cmd += ' --region {region}'.format(region=region) if region else ''
-        return cmd.format(uri=uri)
+        return cmd.format(uri=clean_path(uri))
 
     @staticmethod
     def remove_bucket(uri, force=False):
@@ -106,7 +111,7 @@ class S3Commands:
         """
         cmd = 'aws s3 rb {uri}'
         cmd += ' --force' if force else ''
-        return cmd.format(uri=uri)
+        return cmd.format(uri=clean_path(uri))
 
     @staticmethod
     def pre_sign(uri, expiration=3600):
@@ -120,4 +125,4 @@ class S3Commands:
         :param expiration: Number of seconds until the pre-signed URL expires
         :return: Command string
         """
-        return 'aws s3 presign {uri} --expires-in {expiration}'.format(uri=uri, expiration=expiration)
+        return 'aws s3 presign {uri} --expires-in {expiration}'.format(uri=clean_path(uri), expiration=expiration)
