@@ -62,7 +62,7 @@ class S3(S3Helpers):
         """
         return [out.rsplit(' ', 1)[-1] for out in system_cmd(self.cmd.list())]
 
-    def sync(self, local_path, remote_path=None, delete=False, acl='private'):
+    def sync(self, local_path, remote_path='', delete=False, acl='private'):
         """
         Synchronize local files with an S3 bucket.
 
