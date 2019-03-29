@@ -11,7 +11,7 @@ LOCAL_BASE = os.path.dirname(os.path.dirname(__file__))
 LOCAL_PATH = os.path.join(LOCAL_BASE, 'awsutils', 's3')
 
 
-class TestManipulateInsert(unittest.TestCase):
+class TestS3Sync(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.s3 = S3(S3_BUCKET)

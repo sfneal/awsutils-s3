@@ -11,7 +11,7 @@ def printer(header, body):
     print('\n{0}:\n'.format(header.upper()) + '\n'.join('\t{0}'.format(b) for b in body))
 
 
-class TestManipulateInsert(unittest.TestCase):
+class TestS3Buckets(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.s3 = S3(S3_BUCKET)
