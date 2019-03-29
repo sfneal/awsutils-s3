@@ -1,3 +1,4 @@
+# https://docs.aws.amazon.com/cli/latest/reference/s3/
 import os
 from subprocess import Popen, PIPE
 from awsutils.s3._constants import ACL, TRANSFER_MODES
@@ -10,15 +11,24 @@ def bucket_uri(bucket):
     return 's3://{bucket}'.format(bucket=bucket)
 
 
-def decode_stdout(cmd):
+def system_cmd(cmd, decode_output=False):
     """
-    Decode console output and retrieve decoded strings in list form.
+    Execute a system command.
+
+    When decode_output is True, console output is captured, decoded
+    and returned in list a list of strings.
 
     :param cmd: Command to execute
+    :param decode_output: Optionally capture and decode console output
     :return: List of output strings
     """
-    with Popen(cmd, shell=True, stdout=PIPE) as process:
-        return [i.decode("utf-8").strip() for i in process.stdout]
+    if decode_output:
+        # Capture and decode system output
+        with Popen(cmd, shell=True, stdout=PIPE) as process:
+            return [i.decode("utf-8").strip() for i in process.stdout]
+    else:
+        os.system(cmd)
+        return True
 
 
 class S3(S3Helpers):
@@ -50,7 +60,7 @@ class S3(S3Helpers):
 
         Execute the `aws s3 ls` command and decode the output
         """
-        return [out.rsplit(' ', 1)[-1] for out in decode_stdout(self.cmd.list())]
+        return [out.rsplit(' ', 1)[-1] for out in system_cmd(self.cmd.list())]
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private'):
         """
