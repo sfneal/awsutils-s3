@@ -75,7 +75,7 @@ class S3(S3Helpers):
         :param summarize: Displays summary information (number of objects, total size)
         :return:
         """
-        if '.' not in os.path.basename(remote_path) and not remote_path.endswith('/'):
+        if len(remote_path) > 0 and '.' not in os.path.basename(remote_path) and not remote_path.endswith('/'):
             remote_path = '{0}/'.format(remote_path)
         cmd = self.cmd.list('{0}/{1}'.format(self.bucket_uri, remote_path), recursive, human_readable, summarize)
         return [out.rsplit(' ', 1)[-1] for out in system_cmd(cmd)]
