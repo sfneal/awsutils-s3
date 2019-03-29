@@ -119,18 +119,25 @@ class S3(S3Helpers):
         :param remote_path: S3 key, aka remote path relative to S3 bucket's root
         :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
         """
+        # Recursively upload files if the local target is a folder
+        recursive = True if os.path.isdir(local_path) else False
+
+        # Use local_path file/folder name as remote_path if none is specified
         remote_path = os.path.basename(local_path) if not remote_path else remote_path
         assert_acl(acl)
-        system_cmd(self.cmd.copy(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path)))
+        system_cmd(self.cmd.copy(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), recursive))
+        return remote_path
 
-    def download(self, local_path, remote_path):
+    def download(self, remote_path, local_path=os.getcwd(), recursive=False):
         """
         Download a file or folder from an S3 bucket.
 
-        :param local_path: Path to file on local disk
         :param remote_path: S3 key, aka remote path relative to S3 bucket's root
+        :param local_path: Path to file on local disk
+        :param recursive: Recursively download files/folders
         """
-        pass
+        system_cmd(self.cmd.copy('{0}/{1}'.format(self.bucket_uri, remote_path), local_path, recursive), False)
+        return local_path
 
     def copy(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None):
         """
