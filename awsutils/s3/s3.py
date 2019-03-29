@@ -31,6 +31,12 @@ def system_cmd(cmd, decode_output=True):
         return True
 
 
+def assert_acl(acl):
+    """Validate an ACL value by confirming it is in the list of ACL options."""
+    assert acl in ACL, "ERROR: Invalid ACL parameter ({0})".format(', '.join("'{0}'".format(i) for i in ACL))
+    return True
+
+
 class S3(S3Helpers):
     def __init__(self, bucket_name, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
         """
@@ -95,18 +101,20 @@ class S3(S3Helpers):
         :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
         """
         remote_path = os.path.basename(local_path) if not remote_path else remote_path
-        assert acl in ACL, "ERROR: Invalid ACL parameter ({0})".format(', '.join("'{0}'".format(i) for i in ACL))
+        assert_acl(acl)
         system_cmd(self.cmd.sync(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), delete, acl), False)
 
-    def upload(self, local_path, remote_path=None):
+    def upload(self, local_path, remote_path=None, acl='private'):
         """
         Upload a local file to an S3 bucket.
 
         :param local_path: Path to file on local disk
         :param remote_path: S3 key, aka remote path relative to S3 bucket's root
+        :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
         """
         remote_path = os.path.basename(local_path) if not remote_path else remote_path
-
+        assert_acl(acl)
+        system_cmd(self.cmd.copy(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path)))
 
     def download(self, local_path, remote_path):
         """
