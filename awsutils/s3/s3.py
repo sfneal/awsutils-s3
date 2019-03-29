@@ -76,8 +76,7 @@ class S3(S3Helpers):
         :param delete: Sync with deletion, disabled by default
         :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
         """
-        assert acl in ACL, "ACL parameter must be one of the following: {0}".format(', '.join("'{0}'".format(i)
-                                                                                              for i in ACL))
+        assert acl in ACL, "ERROR: Invalid ACL parameter ({0})".format(', '.join("'{0}'".format(i) for i in ACL))
         system_cmd(self.cmd.sync(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), delete, acl), False)
 
     def upload(self, local_path, remote_path):
