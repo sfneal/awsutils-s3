@@ -93,52 +93,6 @@ class S3(S3Helpers):
         cmd = self.cmd.list('{0}/{1}'.format(self.bucket_uri, remote_path), recursive, human_readable, summarize)
         return [out.rsplit(' ', 1)[-1] for out in system_cmd(cmd)]
 
-    def sync(self, local_path, remote_path=None, delete=False, acl='private'):
-        """
-        Synchronize local files with an S3 bucket.
-
-        S3 sync only copies missing or outdated files or objects between
-        the source and target.  However, you can also supply the --delete
-        option to remove files or objects from the target that are not
-        present in the source.
-
-        :param local_path: Local source directory
-        :param remote_path: Destination directory (relative to bucket root)
-        :param delete: Sync with deletion, disabled by default
-        :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
-        """
-        remote_path = os.path.basename(local_path) if not remote_path else remote_path
-        assert_acl(acl)
-        system_cmd(self.cmd.sync(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), delete, acl), False)
-
-    def upload(self, local_path, remote_path=None, acl='private'):
-        """
-        Upload a local file to an S3 bucket.
-
-        :param local_path: Path to file on local disk
-        :param remote_path: S3 key, aka remote path relative to S3 bucket's root
-        :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
-        """
-        # Recursively upload files if the local target is a folder
-        recursive = True if os.path.isdir(local_path) else False
-
-        # Use local_path file/folder name as remote_path if none is specified
-        remote_path = os.path.basename(local_path) if not remote_path else remote_path
-        assert_acl(acl)
-        system_cmd(self.cmd.copy(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), recursive))
-        return remote_path
-
-    def download(self, remote_path, local_path=os.getcwd(), recursive=False):
-        """
-        Download a file or folder from an S3 bucket.
-
-        :param remote_path: S3 key, aka remote path relative to S3 bucket's root
-        :param local_path: Path to file on local disk
-        :param recursive: Recursively download files/folders
-        """
-        system_cmd(self.cmd.copy('{0}/{1}'.format(self.bucket_uri, remote_path), local_path, recursive), False)
-        return local_path
-
     def copy(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None):
         """
         Copy an S3 file or folder to another
@@ -187,6 +141,52 @@ class S3(S3Helpers):
         """
         uri = '{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path)
         system_cmd(self.cmd.remove(uri, recursive, include, exclude))
+
+    def upload(self, local_path, remote_path=None, acl='private'):
+        """
+        Upload a local file to an S3 bucket.
+
+        :param local_path: Path to file on local disk
+        :param remote_path: S3 key, aka remote path relative to S3 bucket's root
+        :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
+        """
+        # Recursively upload files if the local target is a folder
+        recursive = True if os.path.isdir(local_path) else False
+
+        # Use local_path file/folder name as remote_path if none is specified
+        remote_path = os.path.basename(local_path) if not remote_path else remote_path
+        assert_acl(acl)
+        system_cmd(self.cmd.copy(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), recursive))
+        return remote_path
+
+    def download(self, remote_path, local_path=os.getcwd(), recursive=False):
+        """
+        Download a file or folder from an S3 bucket.
+
+        :param remote_path: S3 key, aka remote path relative to S3 bucket's root
+        :param local_path: Path to file on local disk
+        :param recursive: Recursively download files/folders
+        """
+        system_cmd(self.cmd.copy('{0}/{1}'.format(self.bucket_uri, remote_path), local_path, recursive), False)
+        return local_path
+
+    def sync(self, local_path, remote_path=None, delete=False, acl='private'):
+        """
+        Synchronize local files with an S3 bucket.
+
+        S3 sync only copies missing or outdated files or objects between
+        the source and target.  However, you can also supply the --delete
+        option to remove files or objects from the target that are not
+        present in the source.
+
+        :param local_path: Local source directory
+        :param remote_path: Destination directory (relative to bucket root)
+        :param delete: Sync with deletion, disabled by default
+        :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
+        """
+        remote_path = os.path.basename(local_path) if not remote_path else remote_path
+        assert_acl(acl)
+        system_cmd(self.cmd.sync(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), delete, acl), False)
 
     def create_bucket(self, region='us-east-1'):
         """

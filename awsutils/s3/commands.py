@@ -24,6 +24,23 @@ def move_or_copy(command, object1, object2, recursive=False, include=None, exclu
 
 class S3Commands:
     @staticmethod
+    def list(uri='', recursive=False, human_readable=False, summarize=False):
+        """
+        List files/folders in a bucket if a URI is specified or list available buckets.
+
+        :param uri: S3 bucket URI
+        :param recursive: Recursively list files/folders
+        :param human_readable: Displays file sizes in human readable format
+        :param summarize: Displays summary information (number of objects, total size)
+        :return: Command string
+        """
+        cmd = 'aws s3 ls {uri}'
+        cmd += ' --recursive' if recursive else ''
+        cmd += ' --human-readable' if human_readable else ''
+        cmd += ' --summarize' if summarize else ''
+        return cmd.format(uri=uri)
+
+    @staticmethod
     def copy(object1, object2, recursive=False, include=None, exclude=None, acl='private'):
         """Copy file(s)/folder(s) from one S3 bucket location to another. See move_or_copy for more."""
         return move_or_copy('cp', object1, object2, recursive, include, exclude, acl)
@@ -64,23 +81,6 @@ class S3Commands:
         cmd = 'aws s3 sync "{source_path}" {destination_uri} --acl {acl}'
         cmd += ' --delete' if delete else ''
         return cmd.format(source_path=source_path, destination_uri=destination_uri, acl=acl)
-
-    @staticmethod
-    def list(uri='', recursive=False, human_readable=False, summarize=False):
-        """
-        List files/folders in a bucket if a URI is specified or list available buckets.
-
-        :param uri: S3 bucket URI
-        :param recursive: Recursively list files/folders
-        :param human_readable: Displays file sizes in human readable format
-        :param summarize: Displays summary information (number of objects, total size)
-        :return: Command string
-        """
-        cmd = 'aws s3 ls {uri}'
-        cmd += ' --recursive' if recursive else ''
-        cmd += ' --human-readable' if human_readable else ''
-        cmd += ' --summarize' if summarize else ''
-        return cmd.format(uri=uri)
 
     @staticmethod
     def make_bucket(uri, region=None):
