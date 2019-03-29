@@ -98,14 +98,15 @@ class S3(S3Helpers):
         assert acl in ACL, "ERROR: Invalid ACL parameter ({0})".format(', '.join("'{0}'".format(i) for i in ACL))
         system_cmd(self.cmd.sync(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), delete, acl), False)
 
-    def upload(self, local_path, remote_path):
+    def upload(self, local_path, remote_path=None):
         """
         Upload a local file to an S3 bucket.
 
         :param local_path: Path to file on local disk
         :param remote_path: S3 key, aka remote path relative to S3 bucket's root
         """
-        pass
+        remote_path = os.path.basename(local_path) if not remote_path else remote_path
+
 
     def download(self, local_path, remote_path):
         """

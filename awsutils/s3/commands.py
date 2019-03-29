@@ -1,11 +1,11 @@
 class S3Commands:
     @staticmethod
-    def copy(uri1, uri2, recursive=False, include=None, exclude=None):
+    def copy(object1, object2, recursive=False, include=None, exclude=None):
         """
         Copy file(s)/folder(s) from one S3 bucket location to another
 
-        :param uri1: S3 uri #1
-        :param uri2: S3 uri #2
+        :param object1: S3 uri or file path #1
+        :param object2: S3 uri or file path #2
         :param recursive: Recursively copy all files within the directory
         :param include: Don't exclude files or objects in the command that match the specified pattern
         :param exclude: Exclude all files or objects from the command that matches the specified pattern
@@ -15,7 +15,7 @@ class S3Commands:
         cmd += ' --recursive' if recursive else ''
         cmd += ' --include "{0}"'.format(include) if include else ''
         cmd += ' --exclude "{0}"'.format(exclude) if exclude else ''
-        return cmd.format(uri1=uri1, uri2=uri2)
+        return cmd.format(uri1=object1, uri2=object2)
 
     @staticmethod
     def remove(uri, recursive=False, include=None, exclude=None):
