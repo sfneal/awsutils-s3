@@ -1,22 +1,37 @@
+def move_or_copy(command, object1, object2, recursive=False, include=None, exclude=None, acl='private'):
+    """
+    Copy file(s)/folder(s) from one S3 bucket location to another
+
+    :param command: Execute a 'move' or a 'copy' command
+    :param object1: S3 uri or file path #1
+    :param object2: S3 uri or file path #2
+    :param recursive: Recursively copy all files within the directory
+    :param include: Don't exclude files or objects in the command that match the specified pattern
+    :param exclude: Exclude all files or objects from the command that matches the specified pattern
+    :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
+    :return: Command string
+    """
+    # Determine if we're executing a 'move' or a 'copy' command
+    assert command in ('cp', 'mv', 'copy', 'move'), 'ERROR: Invalid copy or move command type ({0})'.format(command)
+    command = 'mv' if command == 'mv' or command == 'move' else 'cp'
+
+    cmd = 'aws s3 {command} {uri1} {uri2} --acl {acl}'
+    cmd += ' --recursive' if recursive else ''
+    cmd += ' --include "{0}"'.format(include) if include else ''
+    cmd += ' --exclude "{0}"'.format(exclude) if exclude else ''
+    return cmd.format(command=command, uri1=object1, uri2=object2, acl=acl)
+
+
 class S3Commands:
     @staticmethod
     def copy(object1, object2, recursive=False, include=None, exclude=None, acl='private'):
-        """
-        Copy file(s)/folder(s) from one S3 bucket location to another
+        """Copy file(s)/folder(s) from one S3 bucket location to another. See move_or_copy for more."""
+        return move_or_copy('cp', object1, object2, recursive, include, exclude, acl)
 
-        :param object1: S3 uri or file path #1
-        :param object2: S3 uri or file path #2
-        :param recursive: Recursively copy all files within the directory
-        :param include: Don't exclude files or objects in the command that match the specified pattern
-        :param exclude: Exclude all files or objects from the command that matches the specified pattern
-        :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
-        :return: Command string
-        """
-        cmd = 'aws s3 cp {uri1} {uri2} --acl {acl}'
-        cmd += ' --recursive' if recursive else ''
-        cmd += ' --include "{0}"'.format(include) if include else ''
-        cmd += ' --exclude "{0}"'.format(exclude) if exclude else ''
-        return cmd.format(uri1=object1, uri2=object2, acl=acl)
+    @staticmethod
+    def move(object1, object2, recursive=False, include=None, exclude=None, acl='private'):
+        """Move file(s)/folder(s) from one S3 bucket location to another. See move_or_copy for more."""
+        return move_or_copy('mv', object1, object2, recursive, include, exclude, acl)
 
     @staticmethod
     def remove(uri, recursive=False, include=None, exclude=None):
