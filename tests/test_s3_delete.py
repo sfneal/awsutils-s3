@@ -31,6 +31,5 @@ class TestS3Delete(unittest.TestCase):
         self.assertFalse(target in self.s3.list())
 
 
-
 if __name__ == '__main__':
     unittest.main()

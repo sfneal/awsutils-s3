@@ -134,6 +134,19 @@ class S3(S3Helpers):
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
         system_cmd(self.cmd.copy(uri1, uri2, recursive, include, exclude), False)
 
+    def delete(self, remote_path, recursive=False, include=None, exclude=None):
+        """
+        Delete an S3 object from a bucket.
+
+        :param remote_path: Path to S3 object relative to bucket root
+        :param recursive: Recursively copy all files within the directory
+        :param include: Don't exclude files or objects in the command that match the specified pattern
+        :param exclude: Exclude all files or objects from the command that matches the specified pattern
+        :return: Command string
+        """
+        uri = '{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path)
+        system_cmd(self.cmd.remove(uri, recursive, include, exclude))
+
     def create_bucket(self, region='us-east-1'):
         """
         Create a new S3 bucket.
