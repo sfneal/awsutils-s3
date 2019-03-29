@@ -78,7 +78,7 @@ class S3(S3Helpers):
         """
         assert acl in ACL, "ACL parameter must be one of the following: {0}".format(', '.join("'{0}'".format(i)
                                                                                               for i in ACL))
-        os.system(self.cmd.sync(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), delete, acl))
+        system_cmd(self.cmd.sync(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), delete, acl), False)
 
     def upload(self, local_path, remote_path):
         """
@@ -114,7 +114,7 @@ class S3(S3Helpers):
         """
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
-        os.system(self.cmd.copy(uri1, uri2, recursive, include, exclude))
+        system_cmd(self.cmd.copy(uri1, uri2, recursive, include, exclude), False)
 
     def create_bucket(self, region='us-east-1'):
         """
@@ -124,7 +124,7 @@ class S3(S3Helpers):
         """
         # Validate that the bucket does not already exist
         assert self.bucket_name not in self.buckets, 'ERROR: Bucket `{0}` already exists.'.format(self.bucket_name)
-        os.system(self.cmd.make_bucket(self.bucket_uri, region))
+        system_cmd(self.cmd.make_bucket(self.bucket_uri, region), False)
 
     def delete_bucket(self, force=False):
         """
@@ -136,4 +136,4 @@ class S3(S3Helpers):
         """
         # Validate that the bucket does exist
         assert self.bucket_name in self.buckets, 'ERROR: Bucket `{0}` does not exists.'.format(self.bucket_name)
-        os.system(self.cmd.remove_bucket(self.bucket_uri, force))
+        system_cmd(self.cmd.remove_bucket(self.bucket_uri, force), False)
