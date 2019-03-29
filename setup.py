@@ -18,9 +18,9 @@ setup(
     packages=find_packages(),
     namespace_packages=['awsutils'],
     install_requires=[
-
+        'awscli'
     ],
-    url='https://github.com/mrstephenneal/awsutils',
+    url='https://github.com/mrstephenneal/awsutils-s3',
     license='MIT',
     author='Stephen Neal',
     author_email='stephen@stephenneal.net',
