@@ -5,7 +5,7 @@ from awsutils.s3.helpers import S3Helpers
 from awsutils.s3.commands import S3Commands
 
 
-def bucket_uri(bucket):
+def get_bucket_uri(bucket):
     """Convert a S3 bucket name string in to a S3 bucket uri."""
     return 's3://{bucket}'.format(bucket=bucket)
 
@@ -66,7 +66,7 @@ class S3(S3Helpers):
     @property
     def bucket_uri(self):
         """Retrieve a S3 bucket name in URI form."""
-        return bucket_uri(self.bucket_name)
+        return get_bucket_uri(self.bucket_name)
 
     @property
     def buckets(self):
@@ -109,7 +109,7 @@ class S3(S3Helpers):
         http://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters
         """
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
-        uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
+        uri2 = '{uri}/{dst}'.format(uri=get_bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
         system_cmd(self.cmd.copy(uri1, uri2, recursive, include, exclude), False)
 
     def move(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None):
@@ -127,7 +127,7 @@ class S3(S3Helpers):
         http://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters
         """
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
-        uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
+        uri2 = '{uri}/{dst}'.format(uri=get_bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
         system_cmd(self.cmd.move(uri1, uri2, recursive, include, exclude), False)
 
     def delete(self, remote_path, recursive=False, include=None, exclude=None):
