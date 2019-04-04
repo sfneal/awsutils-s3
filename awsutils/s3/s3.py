@@ -21,7 +21,12 @@ def url_host(url):
 
 
 def bucket_uri(bucket):
-    """Convert a S3 bucket name string in to a S3 bucket uri."""
+    """
+    Convert a S3 bucket name string in to a S3 bucket uri.
+
+    :param bucket: Bucket name
+    :return: Bucket URI
+    """
     return 's3://{bucket}'.format(bucket=bucket)
 
 
