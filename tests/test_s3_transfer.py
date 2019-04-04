@@ -32,7 +32,7 @@ class TestS3Transfer(unittest.TestCase):
     @Timer.decorator
     def test_s3_sync(self):
         target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
-        self.s3.sync(target)
+        self.s3.sync(target, quiet=True)
 
         s3_files = self.s3.list(recursive=True)
         local_files = [os.path.join('awsutils', path) for path in DirPaths(os.path.join(LOCAL_BASE, 'awsutils')).walk()]

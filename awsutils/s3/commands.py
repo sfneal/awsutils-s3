@@ -3,7 +3,7 @@ def clean_path(path):
     return '"{0}"'.format(path) if ' ' in path else path
 
 
-def move_or_copy(command, object1, object2, recursive=False, include=None, exclude=None, acl='private'):
+def move_or_copy(command, object1, object2, recursive=False, include=None, exclude=None, acl='private', quiet=True):
     """
     Copy file(s)/folder(s) from one S3 bucket location to another
 
@@ -14,13 +14,16 @@ def move_or_copy(command, object1, object2, recursive=False, include=None, exclu
     :param include: Don't exclude files or objects in the command that match the specified pattern
     :param exclude: Exclude all files or objects from the command that matches the specified pattern
     :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
+    :param quiet: When true, does not display the operations performed from the specified command
     :return: Command string
     """
     # Determine if we're executing a 'move' or a 'copy' command
     assert command in ('cp', 'mv', 'copy', 'move'), 'ERROR: Invalid copy or move command type ({0})'.format(command)
     command = 'mv' if command == 'mv' or command == 'move' else 'cp'
 
-    cmd = 'aws s3 {command} {uri1} {uri2} --acl {acl}'
+    cmd = 'aws s3 {command} {uri1} {uri2}'
+    cmd += ' --quiet' if quiet else ''
+    cmd += ' --acl {acl}'
     cmd += ' --recursive' if recursive else ''
     cmd += ' --include "{0}"'.format(include) if include else ''
     cmd += ' --exclude "{0}"'.format(exclude) if exclude else ''
@@ -46,9 +49,9 @@ class S3Commands:
         return cmd.format(uri=uri)
 
     @staticmethod
-    def copy(object1, object2, recursive=False, include=None, exclude=None, acl='private'):
+    def copy(object1, object2, recursive=False, include=None, exclude=None, acl='private', quiet=True):
         """Copy file(s)/folder(s) from one S3 bucket location to another. See move_or_copy for more."""
-        return move_or_copy('cp', object1, object2, recursive, include, exclude, acl)
+        return move_or_copy('cp', object1, object2, recursive, include, exclude, acl, quiet)
 
     @staticmethod
     def move(object1, object2, recursive=False, include=None, exclude=None, acl='private'):
@@ -73,7 +76,7 @@ class S3Commands:
         return cmd.format(uri=clean_path(uri))
 
     @staticmethod
-    def sync(source_path, destination_uri, delete=False, acl='private'):
+    def sync(source_path, destination_uri, delete=False, acl='private', quiet=False):
         """
         Synchronize local files with an S3 bucket.
 
@@ -81,9 +84,12 @@ class S3Commands:
         :param destination_uri: URI of destination S3 bucket (with path)
         :param delete: Sync with deletion, disabled by default
         :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
+        :param quiet: When true, does not display the operations performed from the specified command
         :return: Command string
         """
-        cmd = 'aws s3 sync "{source_path}" {destination_uri} --acl {acl}'
+        cmd = 'aws s3 sync "{source_path}" {destination_uri}'
+        cmd += ' --acl {acl}'
+        cmd += ' --quiet' if quiet else ''
         cmd += ' --delete' if delete else ''
         return cmd.format(source_path=clean_path(source_path), destination_uri=clean_path(destination_uri), acl=acl)
 
