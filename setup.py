@@ -18,7 +18,9 @@ setup(
     packages=find_packages(),
     namespace_packages=['awsutils'],
     install_requires=[
-        'awscli'
+        'awscli',
+        'tldextract',
+        'validators'
     ],
     url='https://github.com/mrstephenneal/awsutils-s3',
     license='MIT',

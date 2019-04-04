@@ -1,8 +1,8 @@
 import os
 from subprocess import Popen, PIPE
-from validators import url as url_validator
 from urllib.parse import urlparse
 
+from validators import url as url_validator
 from tldextract import extract as url_extract
 
 from awsutils.s3._constants import ACL, TRANSFER_MODES
