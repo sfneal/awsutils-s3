@@ -1,13 +1,56 @@
 import os
 from subprocess import Popen, PIPE
+from validators import url as url_validator
+from urllib.parse import urlparse
+
+from tldextract import extract as url_extract
+
 from awsutils.s3._constants import ACL, TRANSFER_MODES
 from awsutils.s3.helpers import S3Helpers
 from awsutils.s3.commands import S3Commands
 
 
-def get_bucket_uri(bucket):
+def url_host(url):
+    """
+    Retrieve the 'hostname' of a url by parsing its contents
+
+    :param url: URL
+    :return: hostname
+    """
+    return '{uri.scheme}://{uri.netloc}/'.format(uri=urlparse(url))
+
+
+def bucket_uri(bucket):
     """Convert a S3 bucket name string in to a S3 bucket uri."""
     return 's3://{bucket}'.format(bucket=bucket)
+
+
+def bucket_name(url):
+    """
+    Retrieve an AWS S3 bucket name from a URL.
+
+    :param url: URL
+    :return: Bucket name
+    """
+    result = url_extract(url)
+    if result.subdomain == 's3':
+        return url.replace(url_host(url), '').split('/')[0]
+    else:
+        return result.subdomain.replace('.s3', '')
+
+
+def key_extract(url):
+    """
+    Retrieve an AWS object key from a URL.
+
+    :param url: URL
+    :return: Object key
+    """
+    result = url_extract(url)
+    if result.subdomain == 's3':
+        return url.replace(url_host(url), '').split('/', 1)[-1]
+    else:
+        return url.replace(url_host(url), '')
 
 
 def system_cmd(cmd, decode_output=True):
@@ -45,13 +88,13 @@ def remote_path_root(remote_path):
 
 
 class S3(S3Helpers):
-    def __init__(self, bucket_name, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
+    def __init__(self, bucket, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
         """
         AWS CLI S3 wrapper.
 
         https://docs.aws.amazon.com/cli/latest/reference/s3/
 
-        :param bucket_name: S3 bucket name
+        :param bucket: S3 bucket name or S3 bucket url
         :param transfer_mode: Upload/download mode
         :param chunk_size: Size of chunk in multipart upload in MB
         :param multipart_threshold: Minimum size in MB to upload using multipart.
@@ -59,14 +102,15 @@ class S3(S3Helpers):
         assert transfer_mode in TRANSFER_MODES, "ERROR: Invalid 'transfer_mode' value."
         assert chunk_size > 4, "ERROR: Chunk size minimum is 5MB."
 
-        self.bucket_name = bucket_name
+        # Extract the bucket name from the url if bucket var is a url
+        self.bucket_name = bucket if not url_validator(bucket) else bucket_name(bucket)
         S3Helpers.__init__(self, transfer_mode, chunk_size, multipart_threshold)
         self.cmd = S3Commands()
 
     @property
     def bucket_uri(self):
         """Retrieve a S3 bucket name in URI form."""
-        return get_bucket_uri(self.bucket_name)
+        return bucket_uri(self.bucket_name)
 
     @property
     def buckets(self):
@@ -109,7 +153,7 @@ class S3(S3Helpers):
         http://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters
         """
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
-        uri2 = '{uri}/{dst}'.format(uri=get_bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
+        uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
         system_cmd(self.cmd.copy(uri1, uri2, recursive, include, exclude), False)
 
     def move(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None):
@@ -127,7 +171,7 @@ class S3(S3Helpers):
         http://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters
         """
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
-        uri2 = '{uri}/{dst}'.format(uri=get_bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
+        uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
         system_cmd(self.cmd.move(uri1, uri2, recursive, include, exclude), False)
 
     def delete(self, remote_path, recursive=False, include=None, exclude=None):
