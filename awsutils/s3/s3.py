@@ -2,12 +2,12 @@ import os
 from subprocess import Popen, PIPE
 from urllib.parse import urlparse
 
-from validators import url as url_validator
 from tldextract import extract as url_extract
+from validators import url as url_validator
 
 from awsutils.s3._constants import ACL, TRANSFER_MODES
-from awsutils.s3.helpers import S3Helpers
 from awsutils.s3.commands import S3Commands
+from awsutils.s3.helpers import S3Helpers
 
 
 def url_host(url):
