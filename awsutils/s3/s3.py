@@ -179,6 +179,14 @@ class S3(S3Helpers):
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
         system_cmd(self.cmd.move(uri1, uri2, recursive, include, exclude), False)
 
+    def exists(self, remote_path):
+        """
+        Check to see if an S3 key (file or directory) exists
+        :return: Bool
+        """
+        # Check to see if a result was returned, if not then key does not exist
+        return True if len(system_cmd(self.cmd.list('{0}/{1}'.format(self.bucket_uri, remote_path)))) > 0 else False
+
     def delete(self, remote_path, recursive=False, include=None, exclude=None):
         """
         Delete an S3 object from a bucket.

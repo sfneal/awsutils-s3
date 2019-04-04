@@ -42,6 +42,12 @@ class TestS3Operations(unittest.TestCase):
         self.s3.delete(target)
         self.assertFalse(target in self.s3.list())
 
+    @Timer.decorator
+    def test_s3_exists(self):
+        self.assertTrue(self.s3.exists('awsutils/s3/helpers.py'))
+        self.assertTrue(self.s3.exists('awsutils/s3'))
+        self.assertFalse(self.s3.exists('awsutils/s4'))
+
 
 if __name__ == '__main__':
     unittest.main()
