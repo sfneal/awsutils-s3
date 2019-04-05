@@ -137,12 +137,6 @@ class TestS3Delete(unittest.TestCase):
         self.assertTrue(['__init__.py', '_constants.py', '_version.py'] == self.s3.list('awsutils/s5'))
         self.assertFalse('s3.py' in self.s3.list('awsutils/s5'))
 
-    @Timer.decorator
-    def test_directory_include(self):
-        self.s3.delete(self.directory2, include='__*')
-        self.assertTrue(['_constants.py', '_version.py'] == self.s3.list('awsutils/s5'))
-        self.assertFalse('__init__.py' in self.s3.list('awsutils/s5'))
-
 
 if __name__ == '__main__':
     unittest.main()
