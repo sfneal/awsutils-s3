@@ -197,7 +197,7 @@ class S3(S3Helpers):
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
 
-        # Copy recursively if both URI's are directories and NOT files
+        # Move recursively if both URI's are directories and NOT files
         recursive = is_recursive_needed(uri1, uri2, recursive_default=recursive)
         system_cmd(self.cmd.move(uri1, uri2, recursive, include, exclude), False)
 
@@ -220,6 +220,9 @@ class S3(S3Helpers):
         :return: Command string
         """
         uri = '{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path)
+
+        # Delete recursively if both URI's are directories and NOT files
+        recursive = is_recursive_needed(remote_path, recursive_default=recursive)
         system_cmd(self.cmd.remove(uri, recursive, include, exclude))
 
     def upload(self, local_path, remote_path=None, acl='private', quiet=True):

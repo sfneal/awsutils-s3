@@ -101,17 +101,26 @@ class TestS3Delete(unittest.TestCase):
     s3 = S3(S3_BUCKET)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
     file = 'awsutils/s3/helpers.py'
-    directory = ''
+    directory = 'awsutils/s4/'
 
     @classmethod
     def setUpClass(cls):
         cls.s3.sync(cls.target)
-        # cls.s3.copy('awsutils/s3', 'awsutils/s4')
+        cls.s3.copy('awsutils/s3/', cls.directory)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.s3.delete('awsutils/')
 
     @Timer.decorator
     def test_file(self):
         self.s3.delete(self.file)
         self.assertFalse(self.file in self.s3.list(os.path.dirname(self.file)))
+
+    @Timer.decorator
+    def test_directory(self):
+        self.s3.delete(self.directory)
+        self.assertFalse('s4/' in self.s3.list('awsutils'))
 
 
 if __name__ == '__main__':
