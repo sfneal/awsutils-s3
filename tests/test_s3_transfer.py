@@ -43,6 +43,19 @@ class TestS3Transfer(unittest.TestCase):
         self.s3.download('awsutils/s3/helpers.py')
         self.assertTrue(os.path.isfile(self.test_path))
 
+
+class TestS3Sync(unittest.TestCase):
+    s3 = S3(S3_BUCKET)
+    target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.s3.delete('awsutils')
+
+    def setUp(self):
+        self.test_path = None
+        self.delete_path = None
+
     @Timer.decorator
     def test_s3_sync(self):
         target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
