@@ -257,7 +257,7 @@ class S3(S3Helpers):
                                  quiet=quiet), False)
         return local_path
 
-    def sync(self, local_path, remote_path=None, delete=False, acl='private', quiet=False):
+    def sync(self, local_path, remote_path=None, delete=False, acl='private', quiet=True):
         """
         Synchronize local files with an S3 bucket.
 
