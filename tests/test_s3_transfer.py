@@ -9,38 +9,44 @@ from tests import S3_BUCKET, LOCAL_BASE
 
 
 class TestS3Transfer(unittest.TestCase):
+    s3 = S3(S3_BUCKET)
+    target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
+
     @classmethod
     def setUpClass(cls):
-        cls.s3 = S3(S3_BUCKET)
+        cls.s3.sync(cls.target)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.s3.delete('awsutils')
+
+    def setUp(self):
+        self.test_path = None
+
+    def tearDown(self):
+        if self.test_path:
+            self.s3.delete(self.test_path)
 
     @Timer.decorator
     def test_s3_upload(self):
-        target = 'test_s3_transfer.py'
-        self.s3.upload(os.path.join(LOCAL_BASE, 'tests', target))
-        self.assertTrue(target in self.s3.list())
-
-        self.s3.delete(target)
-        self.assertFalse(target in self.s3.list())
+        self.test_path = 'test_s3_transfer.py'
+        self.s3.upload(os.path.join(LOCAL_BASE, 'tests', self.test_path))
+        self.assertTrue(self.test_path in self.s3.list())
 
     @Timer.decorator
     def test_s3_download(self):
-        target = 'helpers.py'
+        self.test_path = 'helpers.py'
         self.s3.download('awsutils/s3/helpers.py')
-        self.assertTrue(os.path.isfile(target))
-
-        os.remove(target)
-        self.assertFalse(os.path.isfile(target))
+        self.assertTrue(os.path.isfile(self.test_path))
 
     @Timer.decorator
     def test_s3_sync(self):
         target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
         self.s3.sync(target, quiet=True)
 
-        s3_files = self.s3.list(recursive=True)
-        local_files = [os.path.join('awsutils', path) for path in DirPaths(os.path.join(LOCAL_BASE, 'awsutils')).walk()]
-        # printer('Remote S3 Files', s3_files)
-        # printer('Local Files', local_files)
-        self.assertEqual(set(s3_files), set(local_files))
+        self.assertEqual(set(self.s3.list(recursive=True)),
+                         set([os.path.join('awsutils', path)
+                              for path in DirPaths(os.path.join(LOCAL_BASE, 'awsutils')).walk()]))
 
 
 if __name__ == '__main__':
