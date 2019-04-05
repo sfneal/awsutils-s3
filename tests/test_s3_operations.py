@@ -66,10 +66,16 @@ class TestS3Exists(unittest.TestCase):
 
 class TestS3Move(unittest.TestCase):
     s3 = S3(S3_BUCKET)
+    target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod
     def setUpClass(cls):
+        cls.s3.sync(cls.target)
         cls.s3.copy('awsutils/s3/helpers.py', 'awsutils/s3/helpers2.py')
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.s3.delete(cls.target)
 
     def setUp(self):
         self.path = None
