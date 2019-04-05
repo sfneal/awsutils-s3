@@ -1,7 +1,9 @@
 import unittest
+
 from looptools import Timer
+
 from awsutils.s3 import S3
-from tests import S3_BUCKET, printer
+from tests import S3_BUCKET
 
 
 class TestS3PreSign(unittest.TestCase):

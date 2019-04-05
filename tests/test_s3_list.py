@@ -1,9 +1,11 @@
-import unittest
 import os
-from looptools import Timer
+import unittest
+
 from dirutility import DirPaths
+from looptools import Timer
+
 from awsutils.s3 import S3
-from tests import S3_BUCKET, TEST_PATH, LOCAL_BASE, LOCAL_PATH, printer
+from tests import S3_BUCKET, TEST_PATH, LOCAL_BASE, LOCAL_PATH
 
 
 class TestS3List(unittest.TestCase):

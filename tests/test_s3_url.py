@@ -1,7 +1,8 @@
 import unittest
-from looptools import Timer
-from awsutils.s3.s3 import url_host, bucket_name, key_extract
 
+from looptools import Timer
+
+from awsutils.s3.s3 import url_host, bucket_name, key_extract
 
 URL1 = 'https://hpadesign-projects.s3.amazonaws.com/tests/20160273_fp.1.png'
 URL2 = 'https://s3.amazonaws.com/hpadesign-projects/tests/20160273_fp.1.png'
