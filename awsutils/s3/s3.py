@@ -162,6 +162,9 @@ class S3(S3Helpers):
         """
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
+
+        # Copy recursively if both URI's are directories and NOT files
+        recursive = True if all('.' not in os.path.basename(uri) for uri in (uri1, uri2)) else recursive
         system_cmd(self.cmd.copy(uri1, uri2, recursive, include, exclude, acl, quiet), False)
 
     def move(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None):

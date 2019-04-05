@@ -35,7 +35,8 @@ class TestS3Copy(unittest.TestCase):
     @Timer.decorator
     def test_directory(self):
         self.test_path = 's4'
-        self.s3.copy('awsutils/s3', self.test_path)
+        print(self.s3.exists('awsutils/s3'))
+        self.s3.copy('awsutils/s3', self.test_path, quiet=False)
         print(self.s3.list())
         self.assertTrue(self.test_path in self.s3.list())
 
