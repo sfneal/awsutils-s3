@@ -49,7 +49,7 @@ class TestS3Exists(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.s3.delete(cls.target)
+        cls.s3.delete('awsutils/')
 
     @Timer.decorator
     def test_file(self):
@@ -71,11 +71,11 @@ class TestS3Move(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.s3.sync(cls.target)
-        cls.s3.copy('awsutils/s3/helpers.py', 'awsutils/s3/helpers2.py')
+        cls.s3.copy('awsutils/s3/helpers.py', 'awsutils/helpers2.py')
 
     @classmethod
     def tearDownClass(cls):
-        cls.s3.delete(cls.target)
+        cls.s3.delete('awsutils/')
 
     def setUp(self):
         self.path = None
@@ -87,19 +87,20 @@ class TestS3Move(unittest.TestCase):
     @Timer.decorator
     def test_file(self):
         self.path = 'helpers2.py'
-        self.s3.move('awsutils/s3/helpers2.py', self.path)
+        self.s3.move('awsutils/helpers2.py', self.path)
 
         # Assert file is in new location
         self.assertTrue(self.path in self.s3.list())
 
         # Assert file is NOT in old location
-        self.assertFalse(self.path in self.s3.list('awsutils/s3'))
+        self.assertFalse(self.path in self.s3.list('awsutils'))
 
     @Timer.decorator
     def test_directory(self):
         self.path = 's5/'
-
         self.s3.move('awsutils/s3/', self.path)
+
+        # Assert file is in new location
         self.assertTrue(self.path in self.s3.list())
 
 
