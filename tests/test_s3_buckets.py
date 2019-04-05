@@ -12,20 +12,35 @@ class TestS3Buckets(unittest.TestCase):
         cls.s3 = S3(S3_BUCKET)
 
     @Timer.decorator
-    def test_s3_list_buckets(self):
+    def test_list_buckets(self):
         buckets = self.s3.buckets
         # printer('Available S3 Buckets', buckets)
         self.assertIsInstance(buckets, list)
 
+
+class TestS3BucketCreate(unittest.TestCase):
+    s3 = S3(S3_BUCKET)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.s3.delete_bucket()
+
     @Timer.decorator
-    def test_create_bucket(self):
+    def test_create(self):
         self.s3.bucket_name = self.s3.bucket_name + '2'
         self.s3.create_bucket()
         self.assertTrue(self.s3.bucket_name in self.s3.buckets)
-        self.s3.delete_bucket()
+
+
+class TestS3delete(unittest.TestCase):
+    s3 = S3(S3_BUCKET)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.s3.create_bucket()
 
     @Timer.decorator
-    def test_delete_bucket(self):
+    def test_delete(self):
         self.s3.bucket_name = self.s3.bucket_name + '2'
         self.s3.create_bucket()
         self.assertTrue(self.s3.bucket_name in self.s3.buckets)
