@@ -42,8 +42,6 @@ class TestS3delete(unittest.TestCase):
     @Timer.decorator
     def test_delete(self):
         self.s3.bucket_name = self.s3.bucket_name + '2'
-        self.s3.create_bucket()
-        self.assertTrue(self.s3.bucket_name in self.s3.buckets)
         self.s3.delete_bucket()
         self.assertFalse(self.s3.bucket_name in self.s3.buckets)
 
