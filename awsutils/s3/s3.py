@@ -143,7 +143,8 @@ class S3(S3Helpers):
         cmd = self.cmd.list('{0}/{1}'.format(self.bucket_uri, remote_path), recursive, human_readable, summarize)
         return [out.rsplit(' ', 1)[-1] for out in system_cmd(cmd)]
 
-    def copy(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None):
+    def copy(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None, acl='private',
+             quiet=True):
         """
         Copy an S3 file or folder to another
 
@@ -153,13 +154,15 @@ class S3(S3Helpers):
         :param recursive: Recursively copy all files within the directory
         :param include: Don't exclude files or objects in the command that match the specified pattern
         :param exclude: Exclude all files or objects from the command that matches the specified pattern
+        :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
+        :param quiet: When true, does not display the operations performed from the specified command
 
         More on inclusion and exclusion parameters...
         http://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters
         """
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
-        system_cmd(self.cmd.copy(uri1, uri2, recursive, include, exclude), False)
+        system_cmd(self.cmd.copy(uri1, uri2, recursive, include, exclude, acl, quiet), False)
 
     def move(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None):
         """

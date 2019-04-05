@@ -17,20 +17,27 @@ class TestS3Copy(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.s3.delete(cls.target)
+        cls.s3.delete('awsutils')
 
     def setUp(self):
-        self.test_file = None
+        self.test_path = None
 
     def tearDown(self):
-        if self.test_file:
-            self.s3.delete(self.test_file)
+        if self.test_path:
+            self.s3.delete(self.test_path)
 
     @Timer.decorator
     def test_file(self):
-        self.test_file = 'helpers.py'
-        self.s3.copy('awsutils/s3/helpers.py', self.test_file)
-        self.assertTrue(self.test_file in self.s3.list())
+        self.test_path = 'helpers.py'
+        self.s3.copy('awsutils/s3/helpers.py', self.test_path)
+        self.assertTrue(self.test_path in self.s3.list())
+
+    @Timer.decorator
+    def test_directory(self):
+        self.test_path = 's4'
+        self.s3.copy('awsutils/s3', self.test_path)
+        print(self.s3.list())
+        self.assertTrue(self.test_path in self.s3.list())
 
 
 class TestS3Exists(unittest.TestCase):
