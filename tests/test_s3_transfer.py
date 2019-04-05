@@ -31,13 +31,13 @@ class TestS3Transfer(unittest.TestCase):
             os.remove(self.test_path)
 
     @Timer.decorator
-    def test_s3_upload(self):
+    def test_upload(self):
         self.test_path = 'test_s3_transfer.py'
         self.s3.upload(os.path.join(LOCAL_BASE, 'tests', self.test_path))
         self.assertTrue(self.test_path in self.s3.list())
 
     @Timer.decorator
-    def test_s3_download(self):
+    def test_download(self):
         self.test_path = 'helpers.py'
         self.delete_path = 'helpers.py'
         self.s3.download('awsutils/s3/helpers.py')
@@ -57,7 +57,7 @@ class TestS3Sync(unittest.TestCase):
         self.delete_path = None
 
     @Timer.decorator
-    def test_s3_sync(self):
+    def test_sync(self):
         target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
         self.s3.sync(target, quiet=True)
 
