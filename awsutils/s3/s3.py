@@ -92,6 +92,20 @@ def remote_path_root(remote_path):
         return remote_path
 
 
+def is_recursive_needed(uri1, uri2, recursive_default):
+    """
+    Checks to see if a recursive flag is needed for a `copy` or `move` command.
+
+    If both URI's are not directories, original recursive value is returned.
+
+    :param uri1: S3 uri #1
+    :param uri2: S3 uri #2
+    :param recursive_default: Default value for recursive flag
+    :return: Bool, true if both are directories
+    """
+    return True if all('.' not in os.path.basename(uri) for uri in (uri1, uri2)) else recursive_default
+
+
 class S3(S3Helpers):
     def __init__(self, bucket, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
         """
@@ -164,7 +178,7 @@ class S3(S3Helpers):
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
 
         # Copy recursively if both URI's are directories and NOT files
-        recursive = True if all('.' not in os.path.basename(uri) for uri in (uri1, uri2)) else recursive
+        recursive = is_recursive_needed(uri1, uri2, recursive)
         system_cmd(self.cmd.copy(uri1, uri2, recursive, include, exclude, acl, quiet), False)
 
     def move(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None):
@@ -183,6 +197,9 @@ class S3(S3Helpers):
         """
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
+
+        # Copy recursively if both URI's are directories and NOT files
+        recursive = is_recursive_needed(uri1, uri2, recursive)
         system_cmd(self.cmd.move(uri1, uri2, recursive, include, exclude), False)
 
     def exists(self, remote_path):
