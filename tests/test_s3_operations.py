@@ -27,7 +27,7 @@ class TestS3Copy(unittest.TestCase):
             self.s3.delete(self.test_file)
 
     @Timer.decorator
-    def test_s3_copy(self):
+    def test_file(self):
         self.test_file = 'helpers.py'
         self.s3.copy('awsutils/s3/helpers.py', self.test_file)
         self.assertTrue(self.test_file in self.s3.list())
@@ -46,9 +46,15 @@ class TestS3Exists(unittest.TestCase):
         cls.s3.delete(cls.target)
 
     @Timer.decorator
-    def test_s3_exists(self):
+    def test_file(self):
         self.assertTrue(self.s3.exists('awsutils/s3/helpers.py'))
+
+    @Timer.decorator
+    def test_directory(self):
         self.assertTrue(self.s3.exists('awsutils/s3'))
+
+    @Timer.decorator
+    def test_directory_not(self):
         self.assertFalse(self.s3.exists('awsutils/s4'))
 
 
@@ -67,7 +73,7 @@ class TestS3Move(unittest.TestCase):
             self.s3.delete(self.test_file)
 
     @Timer.decorator
-    def test_s3_move(self):
+    def test_file(self):
         self.test_file = 'helpers2.py'
 
         self.s3.move('awsutils/s3/helpers2.py', self.test_file)
@@ -77,6 +83,7 @@ class TestS3Move(unittest.TestCase):
 class TestS3Delete(unittest.TestCase):
     s3 = S3(S3_BUCKET)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
+    test_file = 'awsutils/s3/helpers.py'
 
     @classmethod
     def setUpClass(cls):
@@ -86,13 +93,14 @@ class TestS3Delete(unittest.TestCase):
     def tearDownClass(cls):
         cls.s3.delete(cls.target)
 
-    @Timer.decorator
-    def test_s3_delete_file(self):
-        target = 'helpers.py'
-        self.s3.copy('awsutils/s3/helpers.py', target)
+    def tearDown(self):
+        if self.test_file:
+            self.s3.delete(self.test_file)
 
-        self.s3.delete(target)
-        self.assertFalse(target in self.s3.list())
+    @Timer.decorator
+    def test_file(self):
+        self.s3.delete(self.test_file)
+        self.assertFalse(self.test_file in self.s3.list(os.path.dirname(self.test_file)))
 
 
 if __name__ == '__main__':
