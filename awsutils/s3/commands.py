@@ -71,8 +71,8 @@ class S3Commands:
         """
         cmd = 'aws s3 rm {uri}'
         cmd += ' --recursive' if recursive else ''
-        cmd += ' --include "{0}"'.format(include) if include else ''
         cmd += ' --exclude "{0}"'.format(exclude) if exclude else ''
+        cmd += ' --include "{0}"'.format(include) if include else ''
         return cmd.format(uri=clean_path(uri))
 
     @staticmethod
