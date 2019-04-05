@@ -22,10 +22,13 @@ class TestS3Transfer(unittest.TestCase):
 
     def setUp(self):
         self.test_path = None
+        self.delete_path = None
 
     def tearDown(self):
         if self.test_path:
             self.s3.delete(self.test_path)
+        if self.delete_path and os.path.isfile(self.delete_path):
+            os.remove(self.test_path)
 
     @Timer.decorator
     def test_s3_upload(self):
@@ -36,6 +39,7 @@ class TestS3Transfer(unittest.TestCase):
     @Timer.decorator
     def test_s3_download(self):
         self.test_path = 'helpers.py'
+        self.delete_path = 'helpers.py'
         self.s3.download('awsutils/s3/helpers.py')
         self.assertTrue(os.path.isfile(self.test_path))
 
