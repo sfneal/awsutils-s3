@@ -108,12 +108,14 @@ class TestS3Delete(unittest.TestCase):
     s3 = S3(S3_BUCKET)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
     file = 'awsutils/s3/helpers.py'
-    directory = 'awsutils/s4/'
+    directory1 = 'awsutils/s4/'
+    directory2 = 'awsutils/s5/'
 
     @classmethod
     def setUpClass(cls):
         cls.s3.sync(cls.target)
-        cls.s3.copy('awsutils/s3/', cls.directory)
+        cls.s3.copy('awsutils/s3/', cls.directory1)
+        cls.s3.copy('awsutils/s3/', cls.directory2)
 
     @classmethod
     def tearDownClass(cls):
@@ -126,8 +128,20 @@ class TestS3Delete(unittest.TestCase):
 
     @Timer.decorator
     def test_directory(self):
-        self.s3.delete(self.directory)
+        self.s3.delete(self.directory1)
         self.assertFalse('s4/' in self.s3.list('awsutils'))
+
+    @Timer.decorator
+    def test_directory_exclude(self):
+        self.s3.delete(self.directory2, exclude='_*')
+        self.assertTrue(['__init__.py', '_constants.py', '_version.py'] == self.s3.list('awsutils/s5'))
+        self.assertFalse('s3.py' in self.s3.list('awsutils/s5'))
+
+    @Timer.decorator
+    def test_directory_include(self):
+        self.s3.delete(self.directory2, include='__*')
+        self.assertTrue(['_constants.py', '_version.py'] == self.s3.list('awsutils/s5'))
+        self.assertFalse('__init__.py' in self.s3.list('awsutils/s5'))
 
 
 if __name__ == '__main__':
