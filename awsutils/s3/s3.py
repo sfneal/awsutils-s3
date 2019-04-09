@@ -310,4 +310,4 @@ class S3(S3Helpers):
         :return:
         """
         uri = '{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path)
-        return system_cmd(self.cmd.pre_sign(uri, expiration))
+        return system_cmd(self.cmd.pre_sign(uri, expiration))[0]
