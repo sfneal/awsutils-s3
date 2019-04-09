@@ -21,8 +21,11 @@ class TestS3PreSign(unittest.TestCase):
 
     @Timer.decorator
     def test_pre_sign(self):
-        sign = self.s3.pre_sign('awsutils/s3/helpers.py', 10)
-        self.assertTrue(url_validator(sign))
+        self.assertTrue(url_validator(self.s3.pre_sign('awsutils/s3/helpers.py', 10)))
+
+    @Timer.decorator
+    def test_bucket_url(self):
+        self.assertTrue(url_validator(self.s3.bucket_url))
 
 
 if __name__ == '__main__':

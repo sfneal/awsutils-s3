@@ -30,6 +30,19 @@ def bucket_uri(bucket):
     return 's3://{bucket}'.format(bucket=bucket)
 
 
+def bucket_url(bucket, acceleration=True):
+    """
+    Convert a S3 bucket name string in to a S3 bucket url.
+
+    :param bucket: Bucket name
+    :param acceleration: Use transfer acceleration if the endpoint is available
+    :return: Bucket URL
+    """
+    url = 'https://{bucket}.s3.amazonaws.com'.format(bucket=bucket)
+    url_accel = 'https://{bucket}.s3-accelerate.amazonaws.com'.format(bucket=bucket)
+    return url_accel if url_validator(url_accel) and acceleration else url
+
+
 def bucket_name(url):
     """
     Retrieve an AWS S3 bucket name from a URL.
@@ -106,7 +119,7 @@ def is_recursive_needed(*uris, recursive_default):
 
 
 class S3(S3Helpers):
-    def __init__(self, bucket, transfer_mode='auto', chunk_size=5, multipart_threshold=10):
+    def __init__(self, bucket, transfer_mode='auto', chunk_size=5, multipart_threshold=10, accelerate=False):
         """
         AWS CLI S3 wrapper.
 
@@ -116,12 +129,14 @@ class S3(S3Helpers):
         :param transfer_mode: Upload/download mode
         :param chunk_size: Size of chunk in multipart upload in MB
         :param multipart_threshold: Minimum size in MB to upload using multipart.
+        :param accelerate: Enable transfer acceleration
         """
         assert transfer_mode in TRANSFER_MODES, "ERROR: Invalid 'transfer_mode' value."
         assert chunk_size > 4, "ERROR: Chunk size minimum is 5MB."
 
         # Extract the bucket name from the url if bucket var is a url
         self.bucket_name = bucket if not url_validator(bucket) else bucket_name(bucket)
+        self.accelerate = accelerate
         S3Helpers.__init__(self, transfer_mode, chunk_size, multipart_threshold)
         self.cmd = S3Commands()
 
@@ -129,6 +144,11 @@ class S3(S3Helpers):
     def bucket_uri(self):
         """Retrieve a S3 bucket name in URI form."""
         return bucket_uri(self.bucket_name)
+
+    @property
+    def bucket_url(self):
+        """Retrieve a url endpoint for a S3 bucket."""
+        return bucket_url(self.bucket_name, self.accelerate)
 
     @property
     def buckets(self):
