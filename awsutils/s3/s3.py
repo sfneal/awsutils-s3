@@ -331,3 +331,7 @@ class S3(S3Helpers):
         """
         uri = '{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path)
         return system_cmd(self.cmd.pre_sign(uri, expiration))[0]
+
+    def url(self, remote_path):
+        """Retrieve a S3 bucket URL for a S3 object."""
+        return '{url}/{src}'.format(url=self.bucket_url, src=remote_path)
