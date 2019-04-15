@@ -1,7 +1,7 @@
 from urllib.parse import urlparse
 
-from validators import url as url_validator
 from tldextract import extract as url_extract
+from validators import url as url_validator
 
 
 def url_host(url):
