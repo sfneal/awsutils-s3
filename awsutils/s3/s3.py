@@ -1,5 +1,4 @@
 import os
-from subprocess import Popen, PIPE
 from urllib.parse import urlparse
 
 from tldextract import extract as url_extract
@@ -8,6 +7,7 @@ from validators import url as url_validator
 from awsutils.s3._constants import ACL, TRANSFER_MODES
 from awsutils.s3.commands import S3Commands
 from awsutils.s3.helpers import S3Helpers
+from awsutils.s3.system import system_cmd
 
 
 def url_host(url):
@@ -69,26 +69,6 @@ def key_extract(url):
         return url.replace(url_host(url), '').split('/', 1)[-1]
     else:
         return url.replace(url_host(url), '')
-
-
-def system_cmd(cmd, decode_output=True):
-    """
-    Execute a system command.
-
-    When decode_output is True, console output is captured, decoded
-    and returned in list a list of strings.
-
-    :param cmd: Command to execute
-    :param decode_output: Optionally capture and decode console output
-    :return: List of output strings
-    """
-    if decode_output:
-        # Capture and decode system output
-        with Popen(cmd, shell=True, stdout=PIPE) as process:
-            return [i.decode("utf-8").strip() for i in process.stdout]
-    else:
-        os.system(cmd)
-        return True
 
 
 def assert_acl(acl):
