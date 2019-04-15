@@ -40,7 +40,7 @@ class TestS3Transfer(unittest.TestCase):
     def test_download(self):
         self.test_path = 'commands.py'
         self.delete_path = 'commands.py'
-        self.s3.download('awsutils/s3/commands.py', quiet=False)
+        self.s3.download('awsutils/s3/commands.py')
         self.assertTrue(os.path.isfile(self.test_path))
 
 
