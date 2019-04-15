@@ -28,8 +28,8 @@ class TestS3Copy(unittest.TestCase):
 
     @Timer.decorator
     def test_file(self):
-        self.test_path = 'helpers.py'
-        self.s3.copy('awsutils/s3/helpers.py', self.test_path)
+        self.test_path = 'commands.py'
+        self.s3.copy('awsutils/s3/commands.py', self.test_path)
         self.assertTrue(self.test_path in self.s3.list())
 
     @Timer.decorator
@@ -53,7 +53,7 @@ class TestS3Exists(unittest.TestCase):
 
     @Timer.decorator
     def test_file(self):
-        self.assertTrue(self.s3.exists('awsutils/s3/helpers.py'))
+        self.assertTrue(self.s3.exists('awsutils/s3/commands.py'))
 
     @Timer.decorator
     def test_directory(self):
@@ -71,7 +71,7 @@ class TestS3Move(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.s3.sync(cls.target)
-        cls.s3.copy('awsutils/s3/helpers.py', 'awsutils/helpers2.py')
+        cls.s3.copy('awsutils/s3/commands.py', 'awsutils/commands2.py')
 
     @classmethod
     def tearDownClass(cls):
@@ -86,8 +86,8 @@ class TestS3Move(unittest.TestCase):
 
     @Timer.decorator
     def test_file(self):
-        self.path = 'helpers2.py'
-        self.s3.move('awsutils/helpers2.py', self.path)
+        self.path = 'commands2.py'
+        self.s3.move('awsutils/commands2.py', self.path)
 
         # Assert file is in new location
         self.assertTrue(self.path in self.s3.list())
@@ -107,7 +107,7 @@ class TestS3Move(unittest.TestCase):
 class TestS3Delete(unittest.TestCase):
     s3 = S3(S3_BUCKET)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
-    file = 'awsutils/s3/helpers.py'
+    file = 'awsutils/s3/commands.py'
     directory1 = 'awsutils/s4/'
     directory2 = 'awsutils/s5/'
 
@@ -134,7 +134,7 @@ class TestS3Delete(unittest.TestCase):
     @Timer.decorator
     def test_directory_exclude(self):
         self.s3.delete(self.directory2, exclude='_*')
-        self.assertTrue(['__init__.py', '_constants.py', '_version.py'] == self.s3.list('awsutils/s5'))
+        self.assertTrue(['__init__.py', '_version.py'] == self.s3.list('awsutils/s5'))
         self.assertFalse('s3.py' in self.s3.list('awsutils/s5'))
 
 

@@ -38,9 +38,9 @@ class TestS3Transfer(unittest.TestCase):
 
     @Timer.decorator
     def test_download(self):
-        self.test_path = 'helpers.py'
-        self.delete_path = 'helpers.py'
-        self.s3.download('awsutils/s3/helpers.py')
+        self.test_path = 'commands.py'
+        self.delete_path = 'commands.py'
+        self.s3.download('awsutils/s3/commands.py', quiet=False)
         self.assertTrue(os.path.isfile(self.test_path))
 
 
