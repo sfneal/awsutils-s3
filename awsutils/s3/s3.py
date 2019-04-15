@@ -1,9 +1,11 @@
 import os
 
-from awsutils.s3._constants import ACL, TRANSFER_MODES
 from awsutils.s3.commands import S3Commands
 from awsutils.s3.system import system_cmd
 from awsutils.s3.url import url_validator, bucket_name, bucket_uri, bucket_url
+
+
+ACL = ('public-read', 'private', 'public-read-write')
 
 
 def assert_acl(acl):
