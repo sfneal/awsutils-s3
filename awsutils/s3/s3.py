@@ -35,7 +35,7 @@ def is_recursive_needed(*uris, recursive_default):
 
 
 class S3:
-    def __init__(self, bucket, accelerate=False):
+    def __init__(self, bucket, accelerate=False, quiet=True):
         """
         AWS CLI S3 wrapper.
 
@@ -43,10 +43,12 @@ class S3:
 
         :param bucket: S3 bucket name or S3 bucket url
         :param accelerate: Enable transfer acceleration
+        :param quiet: When true, does not display the operations performed from the specified command
         """
         # Extract the bucket name from the url if bucket var is a url
         self.bucket_name = bucket if not url_validator(bucket) else bucket_name(bucket)
         self.accelerate = accelerate
+        self.quiet = quiet
         self.cmd = S3Commands()
 
     @property
@@ -86,7 +88,7 @@ class S3:
         return [out.rsplit(' ', 1)[-1] for out in system_cmd(cmd)]
 
     def copy(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None, acl='private',
-             quiet=True):
+             quiet=None):
         """
         Copy an S3 file or folder to another
 
@@ -102,6 +104,7 @@ class S3:
         More on inclusion and exclusion parameters...
         http://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters
         """
+        quiet = quiet if quiet else self.quiet
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
 
@@ -154,7 +157,7 @@ class S3:
         recursive = is_recursive_needed(remote_path, recursive_default=recursive)
         system_cmd(self.cmd.remove(uri, recursive, include, exclude))
 
-    def upload(self, local_path, remote_path=None, acl='private', quiet=True):
+    def upload(self, local_path, remote_path=None, acl='private', quiet=None):
         """
         Upload a local file to an S3 bucket.
 
@@ -165,6 +168,7 @@ class S3:
         """
         # Recursively upload files if the local target is a folder
         recursive = True if os.path.isdir(local_path) else False
+        quiet = quiet if quiet else self.quiet
 
         # Use local_path file/folder name as remote_path if none is specified
         remote_path = os.path.basename(local_path) if not remote_path else remote_path
@@ -173,7 +177,7 @@ class S3:
                                  quiet=quiet))
         return remote_path
 
-    def download(self, remote_path, local_path=os.getcwd(), recursive=False, quiet=True):
+    def download(self, remote_path, local_path=os.getcwd(), recursive=False, quiet=None):
         """
         Download a file or folder from an S3 bucket.
 
@@ -182,11 +186,12 @@ class S3:
         :param recursive: Recursively download files/folders
         :param quiet: When true, does not display the operations performed from the specified command
         """
+        quiet = quiet if quiet else self.quiet
         system_cmd(self.cmd.copy('{0}/{1}'.format(self.bucket_uri, remote_path), local_path, recursive=recursive,
                                  quiet=quiet), False)
         return local_path
 
-    def sync(self, local_path, remote_path=None, delete=False, acl='private', quiet=True):
+    def sync(self, local_path, remote_path=None, delete=False, acl='private', quiet=None):
         """
         Synchronize local files with an S3 bucket.
 
@@ -201,6 +206,7 @@ class S3:
         :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
         :param quiet: When true, does not display the operations performed from the specified command
         """
+        quiet = quiet if quiet else self.quiet
         remote_path = os.path.basename(local_path) if not remote_path else remote_path
         assert_acl(acl)
         system_cmd(self.cmd.sync(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), delete, acl, quiet), False)
