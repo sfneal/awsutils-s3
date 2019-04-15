@@ -35,7 +35,7 @@ class TestS3BucketCreate(unittest.TestCase):
         self.assertTrue(self.s3.bucket_name in self.s3.buckets)
 
 
-class TestS3delete(unittest.TestCase):
+class TestS3BucketDelete(unittest.TestCase):
     s3 = S3(S3_BUCKET)
 
     @classmethod
