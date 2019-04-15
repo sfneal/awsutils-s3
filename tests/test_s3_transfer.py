@@ -62,7 +62,7 @@ class TestS3Sync(unittest.TestCase):
         self.s3.sync(target, quiet=True)
 
         self.assertEqual(set(self.s3.list(recursive=True)),
-                         set([os.path.join('awsutils', path)
+                         set([os.path.join('awsutils', path).replace('\\', '/')
                               for path in DirPaths(os.path.join(LOCAL_BASE, 'awsutils')).walk()]))
 
 
