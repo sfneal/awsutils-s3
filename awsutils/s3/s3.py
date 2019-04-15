@@ -1,7 +1,7 @@
 import os
 
 from awsutils.s3.commands import S3Commands
-from awsutils.s3.system import system_cmd
+from awsutils.s3.system import SystemCommand
 from awsutils.s3.url import url_validator, bucket_name, bucket_uri, bucket_url
 
 ACL = ('public-read', 'private', 'public-read-write')
@@ -68,7 +68,7 @@ class S3:
 
         Execute the `aws s3 ls` command and decode the output
         """
-        return [out.rsplit(' ', 1)[-1] for out in system_cmd(self.cmd.list())]
+        return [out.rsplit(' ', 1)[-1] for out in SystemCommand(self.cmd.list())]
 
     def list(self, remote_path='', recursive=False, human_readable=False, summarize=False):
         """
@@ -84,8 +84,8 @@ class S3:
         :return:
         """
         return [out.rsplit(' ', 1)[-1] for out in
-                system_cmd(self.cmd.list(uri='{0}/{1}'.format(self.bucket_uri, remote_path_root(remote_path)),
-                                         recursive=recursive, human_readable=human_readable, summarize=summarize))]
+                SystemCommand(self.cmd.list(uri='{0}/{1}'.format(self.bucket_uri, remote_path_root(remote_path)),
+                                            recursive=recursive, human_readable=human_readable, summarize=summarize))]
 
     def copy(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None, acl='private',
              quiet=None):
@@ -108,7 +108,7 @@ class S3:
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
 
         # Copy recursively if both URI's are directories and NOT files
-        return system_cmd(
+        return SystemCommand(
             self.cmd.copy(object1=uri1,
                           object2=uri2,
                           recursive=is_recursive_needed(uri1, uri2, recursive_default=recursive),
@@ -137,7 +137,7 @@ class S3:
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
 
         # Move recursively if both URI's are directories and NOT files
-        return system_cmd(
+        return SystemCommand(
             self.cmd.move(object1=uri1,
                           object2=uri2,
                           recursive=is_recursive_needed(uri1, uri2, recursive_default=recursive),
@@ -152,7 +152,7 @@ class S3:
         :return: Bool
         """
         # Check to see if a result was returned, if not then key does not exist
-        return True if len(system_cmd(self.cmd.list('{0}/{1}'.format(self.bucket_uri, remote_path)))) > 0 else False
+        return True if len(SystemCommand(self.cmd.list('{0}/{1}'.format(self.bucket_uri, remote_path)))) > 0 else False
 
     def delete(self, remote_path, recursive=False, include=None, exclude=None):
         """
@@ -165,7 +165,7 @@ class S3:
         :return: Command string
         """
         # Delete recursively if both URI's are directories and NOT files
-        return system_cmd(
+        return SystemCommand(
             self.cmd.remove(uri='{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path),
                             recursive=is_recursive_needed(remote_path, recursive_default=recursive),
                             include=include,
@@ -185,7 +185,7 @@ class S3:
         # Use local_path file/folder name as remote_path if none is specified
         remote_path = os.path.basename(local_path) if not remote_path else remote_path
         assert_acl(acl)
-        system_cmd(
+        SystemCommand(
             self.cmd.copy(object1=local_path,
                           object2='{0}/{1}'.format(self.bucket_uri, remote_path),
                           recursive=True if os.path.isdir(local_path) else False,
@@ -202,7 +202,7 @@ class S3:
         :param recursive: Recursively download files/folders
         :param quiet: When true, does not display the operations performed from the specified command
         """
-        system_cmd(
+        SystemCommand(
             self.cmd.copy(object1='{0}/{1}'.format(self.bucket_uri, remote_path),
                           object2=local_path,
                           recursive=recursive,
@@ -226,7 +226,7 @@ class S3:
         :param quiet: When true, does not display the operations performed from the specified command
         """
         assert_acl(acl)
-        return system_cmd(
+        return SystemCommand(
             self.cmd.sync(
                 source_path=local_path,
                 destination_uri='{0}/{1}'.format(self.bucket_uri,
@@ -244,7 +244,7 @@ class S3:
         """
         # Validate that the bucket does not already exist
         assert self.bucket_name not in self.buckets, 'ERROR: Bucket `{0}` already exists.'.format(self.bucket_name)
-        return system_cmd(self.cmd.make_bucket(self.bucket_uri, region), False)
+        return SystemCommand(self.cmd.make_bucket(self.bucket_uri, region), False)
 
     def delete_bucket(self, force=False):
         """
@@ -256,7 +256,7 @@ class S3:
         """
         # Validate that the bucket does exist
         assert self.bucket_name in self.buckets, 'ERROR: Bucket `{0}` does not exists.'.format(self.bucket_name)
-        return system_cmd(self.cmd.remove_bucket(self.bucket_uri, force), False)
+        return SystemCommand(self.cmd.remove_bucket(self.bucket_uri, force), False)
 
     def pre_sign(self, remote_path, expiration=3600):
         """
@@ -269,7 +269,8 @@ class S3:
         :param expiration: Number of seconds until the pre-signed URL expires
         :return:
         """
-        return system_cmd(self.cmd.pre_sign('{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path), expiration))[0]
+        return SystemCommand(self.cmd.pre_sign('{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path),
+                                               expiration))[0]
 
     def url(self, remote_path):
         """Retrieve a S3 bucket URL for a S3 object."""
