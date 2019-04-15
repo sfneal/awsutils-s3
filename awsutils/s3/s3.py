@@ -1,7 +1,7 @@
 import os
+from dirutility import SystemCommand
 
 from awsutils.s3.commands import S3Commands
-from awsutils.s3.system import SystemCommand
 from awsutils.s3.url import url_validator, bucket_name, bucket_uri, bucket_url
 
 ACL = ('public-read', 'private', 'public-read-write')
