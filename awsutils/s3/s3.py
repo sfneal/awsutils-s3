@@ -6,7 +6,6 @@ from validators import url as url_validator
 
 from awsutils.s3._constants import ACL, TRANSFER_MODES
 from awsutils.s3.commands import S3Commands
-from awsutils.s3.helpers import S3Helpers
 from awsutils.s3.system import system_cmd
 
 
@@ -98,26 +97,19 @@ def is_recursive_needed(*uris, recursive_default):
     return True if all('.' not in os.path.basename(uri) for uri in uris) else recursive_default
 
 
-class S3(S3Helpers):
-    def __init__(self, bucket, transfer_mode='auto', chunk_size=5, multipart_threshold=10, accelerate=False):
+class S3:
+    def __init__(self, bucket, accelerate=False):
         """
         AWS CLI S3 wrapper.
 
         https://docs.aws.amazon.com/cli/latest/reference/s3/
 
         :param bucket: S3 bucket name or S3 bucket url
-        :param transfer_mode: Upload/download mode
-        :param chunk_size: Size of chunk in multipart upload in MB
-        :param multipart_threshold: Minimum size in MB to upload using multipart.
         :param accelerate: Enable transfer acceleration
         """
-        assert transfer_mode in TRANSFER_MODES, "ERROR: Invalid 'transfer_mode' value."
-        assert chunk_size > 4, "ERROR: Chunk size minimum is 5MB."
-
         # Extract the bucket name from the url if bucket var is a url
         self.bucket_name = bucket if not url_validator(bucket) else bucket_name(bucket)
         self.accelerate = accelerate
-        S3Helpers.__init__(self, transfer_mode, chunk_size, multipart_threshold)
         self.cmd = S3Commands()
 
     @property
