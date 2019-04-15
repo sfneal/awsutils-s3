@@ -83,9 +83,9 @@ class S3:
         :param summarize: Displays summary information (number of objects, total size)
         :return:
         """
-        remote_path = remote_path_root(remote_path)
-        cmd = self.cmd.list('{0}/{1}'.format(self.bucket_uri, remote_path), recursive, human_readable, summarize)
-        return [out.rsplit(' ', 1)[-1] for out in system_cmd(cmd)]
+        return [out.rsplit(' ', 1)[-1] for out in
+                system_cmd(self.cmd.list(uri='{0}/{1}'.format(self.bucket_uri, remote_path_root(remote_path)),
+                                         recursive=recursive, human_readable=human_readable, summarize=summarize))]
 
     def copy(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None, acl='private',
              quiet=None):
@@ -104,13 +104,20 @@ class S3:
         More on inclusion and exclusion parameters...
         http://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters
         """
-        quiet = quiet if quiet else self.quiet
         uri1 = '{uri}/{src}'.format(uri=self.bucket_uri, src=src_path)
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
 
         # Copy recursively if both URI's are directories and NOT files
-        recursive = is_recursive_needed(uri1, uri2, recursive_default=recursive)
-        system_cmd(self.cmd.copy(uri1, uri2, recursive, include, exclude, acl, quiet), False)
+        return system_cmd(
+            self.cmd.copy(object1=uri1,
+                          object2=uri2,
+                          recursive=is_recursive_needed(uri1, uri2, recursive_default=recursive),
+                          include=include,
+                          exclude=exclude,
+                          acl=acl,
+                          quiet=quiet if quiet else self.quiet),
+            False
+        )
 
     def move(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None):
         """
@@ -130,8 +137,14 @@ class S3:
         uri2 = '{uri}/{dst}'.format(uri=bucket_uri(dst_bucket) if dst_bucket else self.bucket_uri, dst=dst_path)
 
         # Move recursively if both URI's are directories and NOT files
-        recursive = is_recursive_needed(uri1, uri2, recursive_default=recursive)
-        system_cmd(self.cmd.move(uri1, uri2, recursive, include, exclude), False)
+        return system_cmd(
+            self.cmd.move(object1=uri1,
+                          object2=uri2,
+                          recursive=is_recursive_needed(uri1, uri2, recursive_default=recursive),
+                          include=include,
+                          exclude=exclude),
+            False
+        )
 
     def exists(self, remote_path):
         """
@@ -151,11 +164,13 @@ class S3:
         :param exclude: Exclude all files or objects from the command that matches the specified pattern
         :return: Command string
         """
-        uri = '{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path)
-
         # Delete recursively if both URI's are directories and NOT files
-        recursive = is_recursive_needed(remote_path, recursive_default=recursive)
-        system_cmd(self.cmd.remove(uri, recursive, include, exclude))
+        return system_cmd(
+            self.cmd.remove(uri='{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path),
+                            recursive=is_recursive_needed(remote_path, recursive_default=recursive),
+                            include=include,
+                            exclude=exclude)
+        )
 
     def upload(self, local_path, remote_path=None, acl='private', quiet=None):
         """
@@ -167,14 +182,15 @@ class S3:
         :param quiet: When true, does not display the operations performed from the specified command
         """
         # Recursively upload files if the local target is a folder
-        recursive = True if os.path.isdir(local_path) else False
-        quiet = quiet if quiet else self.quiet
-
         # Use local_path file/folder name as remote_path if none is specified
         remote_path = os.path.basename(local_path) if not remote_path else remote_path
         assert_acl(acl)
-        system_cmd(self.cmd.copy(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), recursive=recursive, acl=acl,
-                                 quiet=quiet))
+        system_cmd(
+            self.cmd.copy(object1=local_path,
+                          object2='{0}/{1}'.format(self.bucket_uri, remote_path),
+                          recursive=True if os.path.isdir(local_path) else False,
+                          acl=acl, quiet=quiet if quiet else self.quiet)
+        )
         return remote_path
 
     def download(self, remote_path, local_path=os.getcwd(), recursive=False, quiet=None):
@@ -186,9 +202,12 @@ class S3:
         :param recursive: Recursively download files/folders
         :param quiet: When true, does not display the operations performed from the specified command
         """
-        quiet = quiet if quiet else self.quiet
-        system_cmd(self.cmd.copy('{0}/{1}'.format(self.bucket_uri, remote_path), local_path, recursive=recursive,
-                                 quiet=quiet), False)
+        system_cmd(
+            self.cmd.copy(object1='{0}/{1}'.format(self.bucket_uri, remote_path),
+                          object2=local_path,
+                          recursive=recursive,
+                          quiet=quiet if quiet else self.quiet), False
+        )
         return local_path
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private', quiet=None):
@@ -206,10 +225,16 @@ class S3:
         :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
         :param quiet: When true, does not display the operations performed from the specified command
         """
-        quiet = quiet if quiet else self.quiet
-        remote_path = os.path.basename(local_path) if not remote_path else remote_path
         assert_acl(acl)
-        system_cmd(self.cmd.sync(local_path, '{0}/{1}'.format(self.bucket_uri, remote_path), delete, acl, quiet), False)
+        return system_cmd(
+            self.cmd.sync(
+                source_path=local_path,
+                destination_uri='{0}/{1}'.format(self.bucket_uri,
+                                                 os.path.basename(local_path) if not remote_path else remote_path),
+                delete=delete,
+                acl=acl,
+                quiet=quiet if quiet else self.quiet), False
+        )
 
     def create_bucket(self, region='us-east-1'):
         """
@@ -219,7 +244,7 @@ class S3:
         """
         # Validate that the bucket does not already exist
         assert self.bucket_name not in self.buckets, 'ERROR: Bucket `{0}` already exists.'.format(self.bucket_name)
-        system_cmd(self.cmd.make_bucket(self.bucket_uri, region), False)
+        return system_cmd(self.cmd.make_bucket(self.bucket_uri, region), False)
 
     def delete_bucket(self, force=False):
         """
@@ -231,7 +256,7 @@ class S3:
         """
         # Validate that the bucket does exist
         assert self.bucket_name in self.buckets, 'ERROR: Bucket `{0}` does not exists.'.format(self.bucket_name)
-        system_cmd(self.cmd.remove_bucket(self.bucket_uri, force), False)
+        return system_cmd(self.cmd.remove_bucket(self.bucket_uri, force), False)
 
     def pre_sign(self, remote_path, expiration=3600):
         """
@@ -244,8 +269,7 @@ class S3:
         :param expiration: Number of seconds until the pre-signed URL expires
         :return:
         """
-        uri = '{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path)
-        return system_cmd(self.cmd.pre_sign(uri, expiration))[0]
+        return system_cmd(self.cmd.pre_sign('{uri}/{src}'.format(uri=self.bucket_uri, src=remote_path), expiration))[0]
 
     def url(self, remote_path):
         """Retrieve a S3 bucket URL for a S3 object."""
