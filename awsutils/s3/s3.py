@@ -228,8 +228,8 @@ class S3:
         assert_acl(acl)
         return SystemCommand(
             self.cmd.sync(
-                source_path=local_path,
-                destination_uri='{0}/{1}'.format(self.bucket_uri,
+                source=local_path,
+                destination='{0}/{1}'.format(self.bucket_uri,
                                                  os.path.basename(local_path) if not remote_path else remote_path),
                 delete=delete,
                 acl=acl,
