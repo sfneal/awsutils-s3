@@ -76,12 +76,12 @@ class S3Commands:
         return cmd.format(uri=clean_path(uri))
 
     @staticmethod
-    def sync(source_path, destination_uri, delete=False, acl='private', quiet=False):
+    def sync(source, destination, delete=False, acl='private', quiet=False):
         """
         Synchronize local files with an S3 bucket.
 
-        :param source_path: Local source directory
-        :param destination_uri: URI of destination S3 bucket (with path)
+        :param source: Local source directory or S3 URI
+        :param destination: Local source or URI of destination S3 bucket (with path)
         :param delete: Sync with deletion, disabled by default
         :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
         :param quiet: When true, does not display the operations performed from the specified command
@@ -91,7 +91,7 @@ class S3Commands:
         cmd += ' --acl {acl}'
         cmd += ' --quiet' if quiet else ''
         cmd += ' --delete' if delete else ''
-        return cmd.format(source_path=clean_path(source_path), destination_uri=clean_path(destination_uri), acl=acl)
+        return cmd.format(source_path=clean_path(source), destination_uri=clean_path(destination), acl=acl)
 
     @staticmethod
     def make_bucket(uri, region=None):
