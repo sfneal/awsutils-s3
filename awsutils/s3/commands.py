@@ -87,7 +87,7 @@ class S3Commands:
         :param quiet: When true, does not display the operations performed from the specified command
         :return: Command string
         """
-        cmd = 'aws s3 sync "{source_path}" {destination_uri}'
+        cmd = 'aws s3 sync {source_path} {destination_uri}'
         cmd += ' --acl {acl}'
         cmd += ' --quiet' if quiet else ''
         cmd += ' --delete' if delete else ''
