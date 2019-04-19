@@ -210,7 +210,7 @@ class S3:
         )
         return local_path
 
-    def sync(self, local_path, remote_path=None, delete=False, acl='private', quiet=None):
+    def sync(self, local_path, remote_path=None, delete=False, acl='private', quiet=None, remote_source=False):
         """
         Synchronize local files with an S3 bucket.
 
@@ -224,13 +224,18 @@ class S3:
         :param delete: Sync with deletion, disabled by default
         :param acl: Access permissions, must be either 'private', 'public-read' or 'public-read-write'
         :param quiet: When true, does not display the operations performed from the specified command
+        :param remote_source: When true, remote_path is used as the source instead of destination
         """
         assert_acl(acl)
+        uri = '{0}/{1}'.format(self.bucket_uri, os.path.basename(local_path) if not remote_path else remote_path)
+
+        # Sync from the S3 bucket
+        destination, source = (local_path, uri) if remote_source else (uri, local_path)
+
         return SystemCommand(
             self.cmd.sync(
-                source=local_path,
-                destination='{0}/{1}'.format(self.bucket_uri,
-                                                 os.path.basename(local_path) if not remote_path else remote_path),
+                source=source,
+                destination=destination,
                 delete=delete,
                 acl=acl,
                 quiet=quiet if quiet else self.quiet), False
