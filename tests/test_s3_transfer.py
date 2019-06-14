@@ -1,4 +1,5 @@
 import os
+import shutil
 import unittest
 
 from dirutility import DirPaths
@@ -14,6 +15,8 @@ class TestS3Transfer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        if not os.path.exists('s3'):
+            os.mkdir('s3')
         cls.s3.sync(cls.target)
 
     @classmethod
@@ -27,8 +30,11 @@ class TestS3Transfer(unittest.TestCase):
     def tearDown(self):
         if self.test_path:
             self.s3.delete(self.test_path)
-        if self.delete_path and os.path.isfile(self.delete_path):
-            os.remove(self.test_path)
+        if self.delete_path:
+            if os.path.isfile(self.delete_path):
+                os.remove(self.test_path)
+            elif os.path.isdir(self.delete_path):
+                shutil.rmtree(self.test_path)
 
     @Timer.decorator
     def test_upload(self):
@@ -37,11 +43,18 @@ class TestS3Transfer(unittest.TestCase):
         self.assertTrue(self.test_path in self.s3.list())
 
     @Timer.decorator
-    def test_download(self):
+    def test_download_file(self):
         self.test_path = 'commands.py'
         self.delete_path = 'commands.py'
         self.s3.download('awsutils/s3/commands.py')
         self.assertTrue(os.path.isfile(self.test_path))
+
+    @Timer.decorator
+    def test_download_folder(self):
+        self.test_path = os.path.join(os.path.dirname(__file__), 's3')
+        self.delete_path = os.path.join(os.path.dirname(__file__), 's3')
+        self.s3.download('awsutils/s3', self.test_path, recursive=True)
+        self.assertTrue(os.path.isdir(self.test_path))
 
 
 class TestS3Sync(unittest.TestCase):
