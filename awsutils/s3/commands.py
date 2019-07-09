@@ -1,6 +1,6 @@
 def clean_path(path):
     """Return a path string with double quote wrappers if the path contains a space."""
-    return '"{0}"'.format(path) if ' ' in path else path
+    return '"{0}"'.format(path) if path and ' ' in path else path
 
 
 def move_or_copy(command, object1, object2, recursive=False, include=None, exclude=None, acl='private', quiet=True):
