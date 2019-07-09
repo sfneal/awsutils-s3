@@ -1,21 +1,30 @@
+import os
 from argparse import ArgumentParser
 
-from awsutils.s3.s3 import S3
+from awsutils.s3.s3 import S3, bucket_uri
+
+
+def print_output(event, bucket=None, local_path=None, remote_path=None):
+    print('{0}: {1} to {2}'.format(event, local_path,
+                                   os.path.join(bucket_uri(bucket), remote_path if remote_path else '')))
 
 
 def upload(bucket=None, local_path=None, remote_path=None):
     """Upload a file or folder to an AWS S3 bucket."""
     S3(str(bucket)).upload(local_path=local_path, remote_path=remote_path)
+    print_output('Uploaded', bucket, local_path, remote_path)
 
 
 def download(bucket=None, local_path=None, remote_path=None, recursive=False):
     """Download a file or folder to an AWS S3 bucket."""
     S3(str(bucket)).download(local_path=local_path, remote_path=remote_path, recursive=recursive)
+    print_output('Downloaded', bucket, local_path, remote_path)
 
 
 def sync(bucket=None, local_path=None, remote_path=None, delete=False, remote_source=False):
     """Sync files or folders to an AWS S3 bucket."""
     S3(str(bucket)).sync(local_path=local_path, remote_path=remote_path, delete=delete, remote_source=remote_source)
+    print_output('Synced', bucket, local_path, remote_path)
 
 
 def main():
