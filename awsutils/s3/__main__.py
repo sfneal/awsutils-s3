@@ -37,17 +37,18 @@ def main():
 
     # construct the argument parse and parse the arguments
     parser = ArgumentParser(usage=usage, description=description)
-    parser.add_argument('--bucket', help=helpers['bucket'], type=str)
     sub_parser = parser.add_subparsers()
 
     # Upload
     parser_upload = sub_parser.add_parser('upload')
+    parser_upload.add_argument('--bucket', help=helpers['bucket'], type=str)
     parser_upload.add_argument('--local_path', type=str)
     parser_upload.add_argument('--remote_path', type=str)
     parser_upload.set_defaults(func=upload)
 
     # Download
     parser_download = sub_parser.add_parser('download')
+    parser_download.add_argument('--bucket', help=helpers['bucket'], type=str)
     parser_download.add_argument('--local_path', type=str)
     parser_download.add_argument('--remote_path', type=str)
     parser_download.add_argument('--recursive', action='store_true', default=False)
@@ -55,6 +56,7 @@ def main():
 
     # Sync
     parser_sync = sub_parser.add_parser('sync')
+    parser_sync.add_argument('--bucket', help=helpers['bucket'], type=str)
     parser_sync.add_argument('--local_path', type=str)
     parser_sync.add_argument('--remote_path', type=str, default=None)
     parser_sync.add_argument('--delete', action='store_true', default=False)
@@ -63,8 +65,10 @@ def main():
 
     # Parse Arguments
     args = vars(parser.parse_args())
+    print(args)
     func = args.pop('func')
 
+    print(**args)
     func(**args)
 
 
