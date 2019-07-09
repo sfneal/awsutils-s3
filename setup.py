@@ -24,6 +24,11 @@ setup(
         'validators'
     ],
     url='https://github.com/mrstephenneal/awsutils-s3',
+    entry_points={
+        'console_scripts': [
+            'awss3 = awsutils.s3.__main__:main'
+        ]
+    },
     license='MIT',
     author='Stephen Neal',
     author_email='stephen@stephenneal.net',
