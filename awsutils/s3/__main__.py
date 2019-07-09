@@ -47,7 +47,7 @@ def main():
     # Sync
     parser_sync = sub_parser.add_parser('sync')
     parser_sync.add_argument('--local_path', type=str)
-    parser_sync.add_argument('--remote_path', type=str, default='')
+    parser_sync.add_argument('--remote_path', type=str, default=None)
     parser_sync.add_argument('--delete', action='store_true', default=False)
     parser_sync.add_argument('--remote_source', action='store_true', default=False)
     parser_sync.set_defaults(func=sync)
