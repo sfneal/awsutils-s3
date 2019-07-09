@@ -65,10 +65,7 @@ def main():
 
     # Parse Arguments
     args = vars(parser.parse_args())
-    print(args)
     func = args.pop('func')
-
-    print(**args)
     func(**args)
 
 
