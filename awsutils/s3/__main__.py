@@ -5,8 +5,8 @@ from awsutils.s3.s3 import S3, bucket_uri
 
 
 def print_output(event, bucket=None, local_path=None, remote_path=None):
-    print('{0}: {1} to {2}'.format(event, local_path,
-                                   os.path.join(bucket_uri(bucket), remote_path if remote_path else '')))
+    string = '{0}: {1} to {2}' if not event.lower().startswith('download') else '{0}: {2} to {1}'
+    print(string.format(event, local_path, os.path.join(bucket_uri(bucket), remote_path if remote_path else '')))
 
 
 def upload(bucket=None, local_path=None, remote_path=None):
