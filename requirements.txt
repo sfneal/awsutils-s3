@@ -1,5 +1,4 @@
 awscli==1.16.140
--e git+https://github.com/mrstephenneal/awsutils-s3.git@e925d3be85144a609d1d0af4f5405d9ef3d92657#egg=awsutils_s3
 botocore==1.12.130
 certifi==2019.3.9
 chardet==3.0.4
