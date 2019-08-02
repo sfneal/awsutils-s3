@@ -35,7 +35,7 @@ def is_recursive_needed(*uris, recursive_default):
 
 
 class S3:
-    def __init__(self, bucket, accelerate=False, quiet=True):
+    def __init__(self, bucket, accelerate=True, quiet=True):
         """
         AWS CLI S3 wrapper.
 
