@@ -11,20 +11,18 @@ def print_output(event, bucket=None, local_path=None, remote_path=None):
 
 def upload(bucket=None, local_path=None, remote_path=None):
     """Upload a file or folder to an AWS S3 bucket."""
-    S3(str(bucket)).upload(local_path=local_path, remote_path=remote_path)
-    print_output('Uploaded', bucket, local_path, remote_path)
+    S3(str(bucket), quiet=False).upload(local_path=local_path, remote_path=remote_path)
 
 
 def download(bucket=None, local_path=None, remote_path=None, recursive=False):
     """Download a file or folder to an AWS S3 bucket."""
-    S3(str(bucket)).download(local_path=local_path, remote_path=remote_path, recursive=recursive)
-    print_output('Downloaded', bucket, local_path, remote_path)
+    S3(str(bucket), quiet=False).download(local_path=local_path, remote_path=remote_path, recursive=recursive)
 
 
 def sync(bucket=None, local_path=None, remote_path=None, delete=False, remote_source=False):
     """Sync files or folders to an AWS S3 bucket."""
-    S3(str(bucket)).sync(local_path=local_path, remote_path=remote_path, delete=delete, remote_source=remote_source)
-    print_output('Synced', bucket, local_path, remote_path)
+    S3(str(bucket), quiet=False).sync(local_path=local_path, remote_path=remote_path, delete=delete,
+                                      remote_source=remote_source)
 
 
 def main():
