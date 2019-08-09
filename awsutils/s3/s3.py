@@ -185,13 +185,12 @@ class S3:
         # Use local_path file/folder name as remote_path if none is specified
         remote_path = os.path.basename(local_path) if not remote_path else remote_path
         assert_acl(acl)
-        SystemCommand(
+        return SystemCommand(
             self.cmd.copy(object1=local_path,
                           object2='{0}/{1}'.format(self.bucket_uri, remote_path),
                           recursive=True if os.path.isdir(local_path) else False,
                           acl=acl, quiet=quiet if quiet else self.quiet)
         )
-        return remote_path
 
     def download(self, remote_path, local_path=os.getcwd(), recursive=False, quiet=None):
         """
@@ -202,13 +201,12 @@ class S3:
         :param recursive: Recursively download files/folders
         :param quiet: When true, does not display the operations performed from the specified command
         """
-        SystemCommand(
+        return SystemCommand(
             self.cmd.copy(object1='{0}/{1}'.format(self.bucket_uri, remote_path),
                           object2=local_path,
                           recursive=recursive,
                           quiet=quiet if quiet else self.quiet), False
         )
-        return local_path
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private', quiet=None, remote_source=False):
         """
