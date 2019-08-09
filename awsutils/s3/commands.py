@@ -21,7 +21,7 @@ def move_or_copy(command, object1, object2, recursive=False, include=None, exclu
     assert command in ('cp', 'mv', 'copy', 'move'), 'ERROR: Invalid copy or move command type ({0})'.format(command)
     command = 'mv' if command == 'mv' or command == 'move' else 'cp'
 
-    cmd = 'aws s3 {command} "{uri1}" "{uri2}"'
+    cmd = 'aws s3 {command} {uri1} {uri2}'
     cmd += ' --quiet' if quiet else ''
     cmd += ' --acl {acl}'
     cmd += ' --recursive' if recursive else ''
