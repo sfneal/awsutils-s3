@@ -1,16 +1,15 @@
 import os
 import unittest
 
-from dirutility import DirPaths
 from looptools import Timer
 
 from awsutils.s3 import S3
-from tests import S3_BUCKET, TEST_PATH, LOCAL_BASE, LOCAL_PATH
+from tests import S3_BUCKET, TEST_PATH, LOCAL_PATH
 
 
 class TestS3List(unittest.TestCase):
     s3 = S3(S3_BUCKET)
-    target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
+    target = os.path.join(os.path.dirname(os.path.dirname(__file__)), TEST_PATH)
 
     @classmethod
     def setUpClass(cls):
@@ -29,8 +28,8 @@ class TestS3List(unittest.TestCase):
     @Timer.decorator
     def test_s3_list_recursive(self):
         s3_files = self.s3.list(recursive=True)
-        local_files = [os.path.join('awsutils', path).replace('\\', '/') for path in
-                       DirPaths(os.path.join(LOCAL_BASE, 'awsutils')).walk()]
+        local_files = ['/'.join([os.path.basename(LOCAL_PATH), path]) for path in
+                       os.listdir(LOCAL_PATH)]
         self.assertEqual(set(s3_files), set(local_files))
 
 
