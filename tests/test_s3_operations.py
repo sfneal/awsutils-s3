@@ -8,7 +8,7 @@ from tests import S3_BUCKET
 
 
 class TestS3Copy(unittest.TestCase):
-    s3 = S3(S3_BUCKET)
+    s3 = S3(S3_BUCKET, quiet=True)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod
@@ -40,7 +40,7 @@ class TestS3Copy(unittest.TestCase):
 
 
 class TestS3Exists(unittest.TestCase):
-    s3 = S3(S3_BUCKET)
+    s3 = S3(S3_BUCKET, quiet=True)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod
@@ -65,7 +65,7 @@ class TestS3Exists(unittest.TestCase):
 
 
 class TestS3Move(unittest.TestCase):
-    s3 = S3(S3_BUCKET)
+    s3 = S3(S3_BUCKET, quiet=True)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod
@@ -105,7 +105,7 @@ class TestS3Move(unittest.TestCase):
 
 
 class TestS3Delete(unittest.TestCase):
-    s3 = S3(S3_BUCKET)
+    s3 = S3(S3_BUCKET, quiet=True)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
     file = 'awsutils/s3/commands.py'
     directory1 = 'awsutils/s4/'
@@ -134,7 +134,8 @@ class TestS3Delete(unittest.TestCase):
     @Timer.decorator
     def test_directory_exclude(self):
         self.s3.delete(self.directory2, exclude='_*')
-        self.assertTrue(['__init__.py', '_version.py'] == self.s3.list('awsutils/s5'))
+        self.assertTrue('__init__.py' in self.s3.list('awsutils/s5'))
+        self.assertTrue('_version.py' in self.s3.list('awsutils/s5'))
         self.assertFalse('s3.py' in self.s3.list('awsutils/s5'))
 
 
