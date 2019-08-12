@@ -17,7 +17,7 @@ class TestS3List(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.s3.delete('awsutils')
+        cls.s3.delete('dist')
 
     @Timer.decorator
     def test_s3_list(self):
