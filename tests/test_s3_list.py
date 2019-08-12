@@ -28,7 +28,7 @@ class TestS3List(unittest.TestCase):
     @Timer.decorator
     def test_s3_list_recursive(self):
         s3_files = self.s3.list(recursive=True)
-        local_files = ['/'.join([os.path.basename(LOCAL_PATH), path]) for path in
+        local_files = ['/'.join(['dist', path]) for path in
                        os.listdir(LOCAL_PATH)]
         self.assertEqual(set(s3_files), set(local_files))
 
