@@ -7,9 +7,7 @@ from tests import S3_BUCKET
 
 
 class TestS3Buckets(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.s3 = S3(S3_BUCKET)
+    s3 = S3(S3_BUCKET, quiet=True)
 
     @Timer.decorator
     def test_list_buckets(self):
@@ -36,7 +34,7 @@ class TestS3BucketCreate(unittest.TestCase):
 
 
 class TestS3BucketDelete(unittest.TestCase):
-    s3 = S3(S3_BUCKET)
+    s3 = S3(S3_BUCKET, quiet=True)
 
     @classmethod
     def setUpClass(cls):

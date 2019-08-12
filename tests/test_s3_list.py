@@ -8,7 +8,7 @@ from tests import S3_BUCKET, TEST_PATH, LOCAL_PATH
 
 
 class TestS3List(unittest.TestCase):
-    s3 = S3(S3_BUCKET)
+    s3 = S3(S3_BUCKET, quiet=True)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), TEST_PATH)
 
     @classmethod
