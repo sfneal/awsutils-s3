@@ -19,7 +19,7 @@ setup(
     namespace_packages=['awsutils'],
     install_requires=[
         'awscli',
-        'dirutility>=0.7.3',
+        'dirutility>=0.7.18',
         'tldextract',
         'validators'
     ],
