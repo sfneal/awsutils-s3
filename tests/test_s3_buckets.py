@@ -47,7 +47,7 @@ class TestS3BucketDelete(unittest.TestCase):
 
     @Timer.decorator
     def test_delete(self):
-        self.s3.delete_bucket()
+        self.s3.delete_bucket(force=True)
         self.assertFalse(self.s3.bucket_name in self.s3.buckets)
 
 
