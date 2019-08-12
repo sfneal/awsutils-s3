@@ -8,7 +8,7 @@ from tests import S3_BUCKET
 
 
 class TestS3PreSign(unittest.TestCase):
-    s3 = S3(S3_BUCKET)
+    s3 = S3(S3_BUCKET, quiet=True)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod

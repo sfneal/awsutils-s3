@@ -10,7 +10,7 @@ from tests import S3_BUCKET, LOCAL_BASE
 
 
 class TestS3Transfer(unittest.TestCase):
-    s3 = S3(S3_BUCKET)
+    s3 = S3(S3_BUCKET, quiet=True)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod
@@ -58,7 +58,7 @@ class TestS3Transfer(unittest.TestCase):
 
 
 class TestS3Sync(unittest.TestCase):
-    s3 = S3(S3_BUCKET)
+    s3 = S3(S3_BUCKET, quiet=True)
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod
