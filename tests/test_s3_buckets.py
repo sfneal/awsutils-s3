@@ -18,16 +18,16 @@ class TestS3Buckets(unittest.TestCase):
 
 
 class TestS3BucketCreate(unittest.TestCase):
-    s3 = S3(S3_BUCKET)
+    s3 = S3(S3_BUCKET, quiet=True)
 
     @classmethod
     def setUpClass(cls):
         if cls.s3.bucket_name in cls.s3.buckets:
-            cls.s3.delete_bucket()
+            cls.s3.delete_bucket(force=True)
 
     @classmethod
     def tearDownClass(cls):
-        cls.s3.delete_bucket()
+        cls.s3.delete_bucket(force=True)
 
     @Timer.decorator
     def test_create(self):
