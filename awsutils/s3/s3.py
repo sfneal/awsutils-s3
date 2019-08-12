@@ -115,8 +115,7 @@ class S3:
                           include=include,
                           exclude=exclude,
                           acl=acl,
-                          quiet=quiet if quiet else self.quiet),
-            False
+                          quiet=quiet if quiet else self.quiet)
         )
 
     def move(self, src_path, dst_path, dst_bucket=None, recursive=False, include=None, exclude=None):
@@ -142,8 +141,7 @@ class S3:
                           object2=uri2,
                           recursive=is_recursive_needed(uri1, uri2, recursive_default=recursive),
                           include=include,
-                          exclude=exclude),
-            False
+                          exclude=exclude)
         )
 
     def exists(self, remote_path):
@@ -205,7 +203,7 @@ class S3:
             self.cmd.copy(object1='{0}/{1}'.format(self.bucket_uri, remote_path),
                           object2=local_path,
                           recursive=recursive,
-                          quiet=quiet if quiet else self.quiet), False
+                          quiet=quiet if quiet else self.quiet)
         )
 
     def sync(self, local_path, remote_path=None, delete=False, acl='private', quiet=None, remote_source=False):
@@ -236,7 +234,7 @@ class S3:
                 destination=destination,
                 delete=delete,
                 acl=acl,
-                quiet=quiet if quiet else self.quiet), False
+                quiet=quiet if quiet else self.quiet)
         )
 
     def create_bucket(self, region='us-east-1'):
@@ -247,7 +245,7 @@ class S3:
         """
         # Validate that the bucket does not already exist
         assert self.bucket_name not in self.buckets, 'ERROR: Bucket `{0}` already exists.'.format(self.bucket_name)
-        return SystemCommand(self.cmd.make_bucket(self.bucket_uri, region), False)
+        return SystemCommand(self.cmd.make_bucket(self.bucket_uri, region))
 
     def delete_bucket(self, force=False):
         """
@@ -259,7 +257,7 @@ class S3:
         """
         # Validate that the bucket does exist
         assert self.bucket_name in self.buckets, 'ERROR: Bucket `{0}` does not exists.'.format(self.bucket_name)
-        return SystemCommand(self.cmd.remove_bucket(self.bucket_uri, force), False)
+        return SystemCommand(self.cmd.remove_bucket(self.bucket_uri, force))
 
     def pre_sign(self, remote_path, expiration=3600):
         """
