@@ -48,7 +48,7 @@ def bucket_name(url):
     if result.subdomain == 's3':
         return url.replace(url_host(url), '').split('/')[0]
     else:
-        return result.subdomain.replace('.s3', '')
+        return result.subdomain.replace('.s3-accelerate', '').replace('.s3', '')
 
 
 def key_extract(url):
