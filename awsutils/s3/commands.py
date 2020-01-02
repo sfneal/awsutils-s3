@@ -141,3 +141,13 @@ class S3Commands:
         :param bucket: Name of the bucket to check the acceleration status of
         """
         return 'aws s3api get-bucket-accelerate-configuration --bucket {bucket} --query "Status"'.format(bucket=bucket)
+
+    @staticmethod
+    def enable_transfer_acceleration(bucket):
+        """
+        Enable transfer acceleration for an S3 bucket
+
+        :param bucket: Name of the bucket to enable transfer acceleration
+        """
+        return 'aws s3api put-bucket-accelerate-configuration --bucket {bucket} --accelerate-configuration ' \
+               'Status=Enabled'.format(bucket=bucket)

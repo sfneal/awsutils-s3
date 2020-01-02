@@ -246,7 +246,14 @@ class S3:
         """
         # Validate that the bucket does not already exist
         assert self.bucket_name not in self.buckets, 'ERROR: Bucket `{0}` already exists.'.format(self.bucket_name)
-        return SystemCommand(self.cmd.make_bucket(self.bucket_uri, region))
+
+        # Create the bucket
+        create = SystemCommand(self.cmd.make_bucket(self.bucket_uri, region))
+
+        # Enable transfer acceleration
+        SystemCommand(self.cmd.enable_transfer_acceleration(self.bucket_name))
+
+        return create
 
     def delete_bucket(self, force=False):
         """
