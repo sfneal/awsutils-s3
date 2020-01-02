@@ -37,6 +37,10 @@ class TestS3Transfer(unittest.TestCase):
                 shutil.rmtree(self.test_path)
 
     @Timer.decorator
+    def test_acceleration(self):
+        self.assertFalse(self.s3.is_acceleration_enabled())
+
+    @Timer.decorator
     def test_upload(self):
         self.test_path = 'test_s3_transfer.py'
         self.s3.upload(os.path.join(LOCAL_BASE, 'tests', self.test_path))

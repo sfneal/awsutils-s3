@@ -14,17 +14,18 @@ def url_host(url):
     return '{uri.scheme}://{uri.netloc}/'.format(uri=urlparse(url))
 
 
-def bucket_uri(bucket):
+def bucket_uri(bucket, acceleration=False):
     """
     Convert a S3 bucket name string in to a S3 bucket uri.
 
     :param bucket: Bucket name
+    :param acceleration: Use transfer acceleration if the endpoint is available
     :return: Bucket URI
     """
-    return 's3://{bucket}'.format(bucket=bucket)
+    return '{uri}://{bucket}'.format(uri='s3-accelerate' if acceleration else 's3', bucket=bucket)
 
 
-def bucket_url(bucket, acceleration=True):
+def bucket_url(bucket, acceleration=False):
     """
     Convert a S3 bucket name string in to a S3 bucket url.
 

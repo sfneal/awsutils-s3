@@ -132,3 +132,12 @@ class S3Commands:
         :return: Command string
         """
         return 'aws s3 presign {uri} --expires-in {expiration}'.format(uri=clean_path(uri), expiration=expiration)
+
+    @staticmethod
+    def acceleration_enabled_status(bucket):
+        """
+        Check to see if transfer acceleration is enabled for an S3 bucket
+
+        :param bucket: Name of the bucket to check the acceleration status of
+        """
+        return 'aws s3api get-bucket-accelerate-configuration --bucket {bucket} --query "Status"'.format(bucket=bucket)

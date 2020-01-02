@@ -35,7 +35,7 @@ def is_recursive_needed(*uris, recursive_default):
 
 
 class S3:
-    def __init__(self, bucket, accelerate=True, quiet=False):
+    def __init__(self, bucket, accelerate=False, quiet=False):
         """
         AWS CLI S3 wrapper.
 
@@ -45,16 +45,17 @@ class S3:
         :param accelerate: Enable transfer acceleration
         :param quiet: When true, does not display the operations performed from the specified command
         """
+        self.cmd = S3Commands()
+
         # Extract the bucket name from the url if bucket var is a url
         self.bucket_name = bucket if not url_validator(bucket) else bucket_name(bucket)
-        self.accelerate = accelerate
+        self.accelerate = accelerate if accelerate and self.is_acceleration_enabled() else False
         self.quiet = quiet
-        self.cmd = S3Commands()
 
     @property
     def bucket_uri(self):
         """Retrieve a S3 bucket name in URI form."""
-        return bucket_uri(self.bucket_name)
+        return bucket_uri(self.bucket_name, self.accelerate)
 
     @property
     def bucket_url(self):
@@ -276,3 +277,12 @@ class S3:
     def url(self, remote_path):
         """Retrieve a S3 bucket URL for a S3 object."""
         return '{url}/{src}'.format(url=self.bucket_url, src=remote_path)
+
+    def is_acceleration_enabled(self):
+        """Determine if transfer acceleration is enabled for an AWS S3 bucket."""
+        output = SystemCommand(self.cmd.acceleration_enabled_status(self.bucket_name)).output
+
+        if len(output) > 0:
+            return output[0].strip('"').lower() == 'enabled'
+        else:
+            return False
