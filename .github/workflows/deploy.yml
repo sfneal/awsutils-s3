@@ -26,6 +26,9 @@ jobs:
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
 
+      - name: Set Version
+        run: echo "VERSION=$(sh .github/scripts/get_version.sh)" >> $GITHUB_ENV
+
       - name: Upgrade package installers
         run: python -m pip install --upgrade pip
 
@@ -33,11 +36,13 @@ jobs:
         run: python -m pip install twine
 
       - name: Build package distribution
-        run: python setup.py sdist
+        run: python setup.py sdist --dist-dir ./dist
 
-      - name: Set Version
-        run: |
-          echo "VERSION=$(sh .github/scripts/get_version.sh)" >> $GITHUB_ENV
+      - name: LS Dist
+        run: ls ./dist
+
+      - name: LS
+        run: ls
 
       - name: Upload package to PyPi
-        run: twine upload -u __token__ -p "${{ secrets.PYPI_TOKEN }}" dist/awsutils-s3-"${VERSION}".tag.gz
+        run: twine upload -u __token__ -p "${{ secrets.PYPI_TOKEN }}" ./dist/awsutils-s3-"${VERSION}".tag.gz
