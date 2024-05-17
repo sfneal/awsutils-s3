@@ -11,11 +11,13 @@ class TestS3List(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.s3.sync(cls.target)
 
     @classmethod
     def tearDownClass(cls):
-        cls.s3.delete('dist')
+        cls.s3.delete(TEST_PATH)
+        super().tearDownClass()
 
     @Timer.decorator
     def test_s3_list(self):
@@ -26,7 +28,7 @@ class TestS3List(TestCase):
     @Timer.decorator
     def test_s3_list_recursive(self):
         s3_files = self.s3.list(recursive=True)
-        local_files = ['/'.join(['dist', path]) for path in
+        local_files = ['/'.join(['data', path]) for path in
                        os.listdir(LOCAL_PATH)]
         self.assertEqual(set(s3_files), set(local_files))
 

@@ -11,11 +11,13 @@ class TestS3Copy(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.s3.sync(cls.target)
 
     @classmethod
     def tearDownClass(cls):
         cls.s3.delete('awsutils')
+        super().tearDownClass()
 
     def setUp(self):
         self.test_path = None
@@ -42,11 +44,13 @@ class TestS3Exists(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.s3.sync(cls.target)
 
     @classmethod
     def tearDownClass(cls):
         cls.s3.delete('awsutils/')
+        super().tearDownClass()
 
     @Timer.decorator
     def test_file(self):
@@ -66,12 +70,14 @@ class TestS3Move(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.s3.sync(cls.target)
         cls.s3.copy('awsutils/s3/commands.py', 'awsutils/commands2.py')
 
     @classmethod
     def tearDownClass(cls):
         cls.s3.delete('awsutils/')
+        super().tearDownClass()
 
     def setUp(self):
         self.path = None
@@ -108,6 +114,7 @@ class TestS3Delete(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.s3.sync(cls.target)
         cls.s3.copy('awsutils/s3/', cls.directory1)
         cls.s3.copy('awsutils/s3/', cls.directory2)
@@ -115,6 +122,7 @@ class TestS3Delete(TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.s3.delete('awsutils/')
+        super().tearDownClass()
 
     @Timer.decorator
     def test_file(self):

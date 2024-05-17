@@ -14,6 +14,7 @@ class TestS3Transfer(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         if not os.path.exists('s3'):
             os.mkdir('s3')
         cls.s3.sync(cls.target)
@@ -21,6 +22,7 @@ class TestS3Transfer(TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.s3.delete('awsutils')
+        super().tearDownClass()
 
     def setUp(self):
         self.test_path = None
@@ -66,6 +68,7 @@ class TestS3Sync(TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.s3.delete('awsutils')
+        super().tearDownClass()
 
     def setUp(self):
         self.test_path = None

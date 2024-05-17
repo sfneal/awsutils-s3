@@ -12,11 +12,13 @@ class TestS3PreSign(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.s3.sync(cls.target)
 
     @classmethod
     def tearDownClass(cls):
         cls.s3.delete('awsutils')
+        super().tearDownClass()
 
     @Timer.decorator
     def test_pre_sign(self):
