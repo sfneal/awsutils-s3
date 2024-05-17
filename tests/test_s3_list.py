@@ -3,21 +3,21 @@ import unittest
 
 from looptools import Timer
 
-from awsutils.s3 import S3
-from tests import S3_BUCKET, TEST_PATH, LOCAL_PATH
+from tests import TEST_PATH, LOCAL_PATH, TestCase
 
 
-class TestS3List(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
+class TestS3List(TestCase):
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), TEST_PATH)
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         cls.s3.sync(cls.target)
 
     @classmethod
     def tearDownClass(cls):
-        cls.s3.delete('dist')
+        cls.s3.delete(TEST_PATH)
+        super().tearDownClass()
 
     @Timer.decorator
     def test_s3_list(self):
@@ -28,7 +28,7 @@ class TestS3List(unittest.TestCase):
     @Timer.decorator
     def test_s3_list_recursive(self):
         s3_files = self.s3.list(recursive=True)
-        local_files = ['/'.join(['dist', path]) for path in
+        local_files = ['/'.join(['data', path]) for path in
                        os.listdir(LOCAL_PATH)]
         self.assertEqual(set(s3_files), set(local_files))
 

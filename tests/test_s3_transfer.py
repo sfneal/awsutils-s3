@@ -6,15 +6,15 @@ from dirutility import DirPaths
 from looptools import Timer
 
 from awsutils.s3 import S3
-from tests import S3_BUCKET, LOCAL_BASE
+from tests import TestCase, LOCAL_BASE
 
 
-class TestS3Transfer(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
+class TestS3Transfer(TestCase):
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         if not os.path.exists('s3'):
             os.mkdir('s3')
         cls.s3.sync(cls.target)
@@ -22,6 +22,7 @@ class TestS3Transfer(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.s3.delete('awsutils')
+        super().tearDownClass()
 
     def setUp(self):
         self.test_path = None
@@ -38,7 +39,7 @@ class TestS3Transfer(unittest.TestCase):
 
     @Timer.decorator
     def test_acceleration(self):
-        self.assertFalse(self.s3.is_acceleration_enabled())
+        self.assertTrue(self.s3.is_acceleration_enabled())
 
     @Timer.decorator
     def test_upload(self):
@@ -61,13 +62,13 @@ class TestS3Transfer(unittest.TestCase):
         self.assertTrue(os.path.isdir(self.test_path))
 
 
-class TestS3Sync(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
+class TestS3Sync(TestCase):
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod
     def tearDownClass(cls):
         cls.s3.delete('awsutils')
+        super().tearDownClass()
 
     def setUp(self):
         self.test_path = None

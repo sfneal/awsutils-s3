@@ -1,3 +1,5 @@
+from tests._testcase import TestCase
+
 from ._config import S3_BUCKET, TEST_PATH, LOCAL_BASE, LOCAL_PATH
 
 
@@ -6,4 +8,4 @@ def printer(header, body):
     print('\n{0}:\n'.format(header.upper()) + '\n'.join('\t{0}'.format(b) for b in body))
 
 
-__all__ = ['S3_BUCKET', 'TEST_PATH', 'LOCAL_BASE', 'LOCAL_PATH', 'printer']
+__all__ = ['S3_BUCKET', 'TEST_PATH', 'LOCAL_BASE', 'LOCAL_PATH', 'printer', 'TestCase']
