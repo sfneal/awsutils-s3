@@ -40,4 +40,4 @@ jobs:
           echo "VERSION=$(sh .github/scripts/get_version.sh)" >> $GITHUB_ENV
 
       - name: Upload package to PyPi
-        run: twine upload -u __token__ -p "${{ secrets.PYPI_TOKEN }}" dist/awsutils_s3-"${VERSION}".tag.gz
+        run: twine upload -u __token__ -p "${{ secrets.PYPI_TOKEN }}" dist/awsutils-s3-"${VERSION}".tag.gz
