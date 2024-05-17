@@ -2,22 +2,17 @@ import unittest
 
 from looptools import Timer
 
-from awsutils.s3 import S3
-from tests import S3_BUCKET
+from tests import TestCase
 
 
-class TestS3Buckets(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
-
+class TestS3Buckets(TestCase):
     @Timer.decorator
     def test_list_buckets(self):
         buckets = self.s3.buckets
         self.assertIsInstance(buckets, list)
 
 
-class TestS3BucketCreate(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
-
+class TestS3BucketCreate(TestCase):
     @classmethod
     def setUpClass(cls):
         if cls.s3.bucket_name in cls.s3.buckets:
@@ -33,9 +28,7 @@ class TestS3BucketCreate(unittest.TestCase):
         self.assertTrue(self.s3.bucket_name in self.s3.buckets)
 
 
-class TestS3BucketDelete(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
-
+class TestS3BucketDelete(TestCase):
     @classmethod
     def setUpClass(cls):
         if cls.s3.bucket_name not in cls.s3.buckets:

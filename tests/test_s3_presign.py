@@ -3,12 +3,11 @@ import unittest
 
 from looptools import Timer
 
-from awsutils.s3 import S3, url_validator
-from tests import S3_BUCKET
+from awsutils.s3 import url_validator
+from tests import TestCase
 
 
-class TestS3PreSign(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
+class TestS3PreSign(TestCase):
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod

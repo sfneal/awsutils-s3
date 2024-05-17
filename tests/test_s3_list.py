@@ -3,12 +3,10 @@ import unittest
 
 from looptools import Timer
 
-from awsutils.s3 import S3
-from tests import S3_BUCKET, TEST_PATH, LOCAL_PATH
+from tests import TEST_PATH, LOCAL_PATH, TestCase
 
 
-class TestS3List(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
+class TestS3List(TestCase):
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), TEST_PATH)
 
     @classmethod

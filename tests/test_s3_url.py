@@ -3,13 +3,14 @@ import unittest
 from looptools import Timer
 
 from awsutils.s3.url import url_host, bucket_name, key_extract
+from tests import TestCase
 
 URL1 = 'https://hpadesign-projects.s3.amazonaws.com/tests/20160273_fp.1.png'
 URL2 = 'https://s3.amazonaws.com/hpadesign-projects/tests/20160273_fp.1.png'
 BUCKET_NAME = 'hpadesign-projects'
 
 
-class TestS3URL(unittest.TestCase):
+class TestS3URL(TestCase):
     @Timer.decorator
     def test_s3url_url_host(self):
         """Extract a URL's host domain."""

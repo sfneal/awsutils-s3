@@ -3,12 +3,10 @@ import unittest
 
 from looptools import Timer
 
-from awsutils.s3 import S3
-from tests import S3_BUCKET
+from tests import TestCase
 
 
-class TestS3Copy(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
+class TestS3Copy(TestCase):
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod
@@ -39,8 +37,7 @@ class TestS3Copy(unittest.TestCase):
         self.assertTrue(self.test_path in self.s3.list())
 
 
-class TestS3Exists(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
+class TestS3Exists(TestCase):
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod
@@ -64,8 +61,7 @@ class TestS3Exists(unittest.TestCase):
         self.assertFalse(self.s3.exists('awsutils/s4'))
 
 
-class TestS3Move(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
+class TestS3Move(TestCase):
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
 
     @classmethod
@@ -104,8 +100,7 @@ class TestS3Move(unittest.TestCase):
         self.assertTrue(self.path in self.s3.list())
 
 
-class TestS3Delete(unittest.TestCase):
-    s3 = S3(S3_BUCKET, quiet=True)
+class TestS3Delete(TestCase):
     target = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'awsutils')
     file = 'awsutils/s3/commands.py'
     directory1 = 'awsutils/s4/'
