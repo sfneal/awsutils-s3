@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
 
+      - name: Print Python packages list
+        run: python -m pip freeze
+
       - name: AWS Authentication
         run: |
           aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}" \
