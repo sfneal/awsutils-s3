@@ -16,6 +16,8 @@ updates:
         patterns:
           - "awscli"
           - "botocore"
+          - "rsa"
+          - "docutils"
         update-types:
           - "minor"
           - "patch"
