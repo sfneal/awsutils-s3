@@ -1,4 +1,36 @@
-awscli
-dirutility>=0.7.18
-tldextract
-validators
+-r requirements-base.txt
+awscli==1.31.13; python_version <= "3.7"
+awscli==1.32.110; python_version >= "3.8"
+botocore==1.33.13; python_version <= "3.7"
+botocore==1.34.110; python_version >= "3.8"
+certifi==2024.2.2
+charset-normalizer==3.3.2
+colorama==0.4.4; python_version <= "3.7"
+colorama==0.4.6; python_version >= "3.8"
+dirutility==0.7.20
+docutils==0.16
+filelock==3.12.2; python_version <= "3.7"
+filelock==3.14.0; python_version >= "3.8"
+idna==3.7
+jmespath==1.0.1
+looptools==1.2.4
+pyasn1==0.5.1; python_version <= "3.7"
+pyasn1==0.6.0; python_version >= "3.8"
+python-dateutil==2.9.0.post0
+PyYAML==6.0.1
+requests==2.31.0; python_version <= "3.7"
+requests==2.32.2; python_version >= "3.8"
+requests-file==2.1.0
+rsa==4.7.2
+s3transfer==0.8.2; python_version <= "3.7"
+s3transfer==0.10.1; python_version >= "3.8"
+setuptools==70.0.0; python_version >= "3.12"
+six==1.16.0
+tldextract==4.0.0; python_version <= "3.7"
+tldextract==5.1.2; python_version >= "3.8"
+tqdm==4.66.4
+urllib3==1.26.18; python_version <= "3.9"
+urllib3==2.2.1; python_version >= "3.10"
+validators==0.20.0; python_version <= "3.9"
+validators==0.28.1; python_version >= "3.10"
+wheel==0.43.0; python_version >= "3.12"
