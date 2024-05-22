@@ -64,7 +64,7 @@ def main():
     # Parse Arguments
     args = vars(parser.parse_args())
     func = args.pop('func')
-    return func(**args)
+    func(**args)
 
 
 if __name__ == '__main__':
