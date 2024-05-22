@@ -20,7 +20,7 @@ python-dateutil==2.9.0.post0
 PyYAML==6.0.1
 requests==2.32.2; python_version >= "3.8"
 requests-file==2.1.0
-rsa==4.7.2
+rsa==4.9
 s3transfer==0.8.2; python_version <= "3.7"
 s3transfer==0.10.1; python_version >= "3.8"
 setuptools==70.0.0; python_version >= "3.12"
