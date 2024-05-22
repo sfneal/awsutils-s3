@@ -2,7 +2,8 @@ import os
 import shutil
 import unittest
 
-from dirutility import DirPaths
+import dirutility
+from dirutility import DirPaths, SystemCommand
 from looptools import Timer
 
 from awsutils.s3 import S3
@@ -48,10 +49,35 @@ class TestS3Transfer(TestCase):
         self.assertTrue(self.test_path in self.s3.list())
 
     @Timer.decorator
+    def test_upload_cli(self):
+        self.test_path = 'test_s3_transfer.py'
+
+        SystemCommand("awss3 upload --bucket {bucket} --local_path {local_path} --remote_path {remote_path}".format(
+            bucket=self.s3.bucket_name,
+            local_path=os.path.join(LOCAL_BASE, 'tests', self.test_path),
+            remote_path='test_s3_transfer.py'
+        ))
+
+        self.assertTrue(self.test_path in self.s3.list())
+
+    @Timer.decorator
     def test_download_file(self):
         self.test_path = 'commands.py'
         self.delete_path = 'commands.py'
         self.s3.download('awsutils/s3/commands.py')
+        self.assertTrue(os.path.isfile(self.test_path))
+
+    @Timer.decorator
+    def test_download_file_cli(self):
+        self.test_path = 'commands.py'
+        self.delete_path = 'commands.py'
+
+        SystemCommand("awss3 download --bucket {bucket} --local_path {local_path} --remote_path {remote_path}".format(
+            bucket=self.s3.bucket_name,
+            local_path='commands.py',
+            remote_path='awsutils/s3/commands.py'
+        ))
+
         self.assertTrue(os.path.isfile(self.test_path))
 
     @Timer.decorator
