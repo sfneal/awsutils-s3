@@ -1,0 +1,5 @@
+awscli
+dirutility>=0.7.18
+looptools
+tldextract
+validators

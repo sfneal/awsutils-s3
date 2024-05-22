@@ -10,3 +10,12 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      awscli:
+        applies-to: version-updates
+        patterns:
+          - "awscli"
+          - "botocore"
+        update-types:
+          - "minor"
+          - "patch"
