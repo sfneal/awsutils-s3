@@ -24,7 +24,7 @@ requests-file==2.1.0
 rsa==4.7.2
 s3transfer==0.8.2; python_version <= "3.7"
 s3transfer==0.10.2; python_version >= "3.8"
-setuptools==74.1.2; python_version >= "3.12"
+setuptools==75.1.0; python_version >= "3.12"
 six==1.16.0
 tldextract==4.0.0; python_version <= "3.7"
 tldextract==5.1.2; python_version >= "3.8"
