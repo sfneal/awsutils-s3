@@ -28,7 +28,7 @@ setuptools==75.2.0; python_version >= "3.12"
 six==1.16.0
 tldextract==4.0.0; python_version <= "3.7"
 tldextract==5.1.2; python_version >= "3.8"
-tqdm==4.66.5
+tqdm==4.67.0
 urllib3==1.26.18; python_version <= "3.9"
 urllib3==2.2.3; python_version >= "3.10"
 validators==0.20.0; python_version <= "3.9"
